@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-09-10T04:29:45.272390+00:00",
+  "status": "passed",
+  "checks": [
+    {
+      "id": "semantic_grounding",
+      "passed": true,
+      "seconds": 5.044,
+      "answer_nonempty": true,
+      "expected_course_evidence": "BDSC205",
+      "response_mode": "gemini",
+      "cache_hit": false,
+      "fresh_gemini_generation": true,
+      "fallback_or_limit_warning": false
+    },
+    {
+      "id": "course_schedule",
+      "passed": true,
+      "seconds": 0.468,
+      "answer_nonempty": true,
+      "expected_course_evidence": "BDSC201",
+      "response_mode": "schedule",
+      "cache_hit": false,
+      "fresh_gemini_generation": false,
+      "fallback_or_limit_warning": false
+    },
+    {
+      "id": "outside_scope",
+      "passed": true,
+      "seconds": 0.519,
+      "answer_nonempty": true,
+      "expected_course_evidence": null,
+      "response_mode": "outside_scope",
+      "cache_hit": false,
+      "fresh_gemini_generation": false,
+      "fallback_or_limit_warning": false
+    }
+  ],
+  "runtime": {
+    "os": "Linux",
+    "python": "3.12.14",
+    "github_actions": true
+  },
+  "authentication": {
+    "cookies_used": false,
+    "api_keys_used": false,
+    "login_used": false
+  },
+  "evidence_scope": "Anonymous hosted access and three behavioral checks; cached Gemini output is explicitly distinguished from fresh generation. No answer or source text is saved.",
+  "base_url": "https://sugang-mate.onrender.com",
+  "dataset": {
+    "dataset_kind": "collected",
+    "course_count": 25,
+    "dataset_sha256": "134c09d53cd3588555538459ee470fe9d540fcfe75b37c24d09c960929769b9f"
+  },
+  "anonymous_access": {
+    "configuration": true,
+    "public_chat_contract": true
+  },
+  "protected_dataset_file": {
+    "download_blocked": true,
+    "http_status": 403
+  },
+  "recorded_at_utc": "2026-09-10T04:31:46.271649+00:00",
+  "runtime_commit": "dc358a368a2495d8536ef3e79c9be50ef0458087",
+  "validation_client_commit": "e690bb1b5c03dddc6241c2275db97bf03575833b",
+  "external_run_url": "https://github.com/JunH14/sugang-mate/actions/runs/34437384036",
+  "external_job_id": 102745195776,
+  "render": {
+    "deployment_id": "dep-dah2uttbedkc738sr0fg",
+    "deployment_seconds": 113,
+    "python": "3.12.12",
+    "plan": "Free",
+    "region": "Singapore",
+    "server_restart_observed_at": "2026-09-10T13:27:00+09:00",
+    "restart_evidence": "Render Events: Service restarted by you",
+    "same_dataset_after_restart": true,
+    "dataset_storage": "Render Secret File, provisioned at startup independently of the developer PC"
+  },
+  "runtime_sha256": {
+    "app.py": "090a0eac9ec381cc9474e2a8f4cf9821976ddacd8436ee2ba541d6f5da2a191a",
+    "gradio_app.py": "18ac7874a62d3b4370e4645fae39ab38db7c3dfd991a0a13d1d06145e50b4b29",
+    "run_public.py": "e468b1235c6d3d850d4c0cc8985492e88424188900bf54c47d5f7ed1558a085e",
+    "sugang_mate/config.py": "650026eba5e061f8bca2c8efe97e354474baa8ae3c951fef08f93a9e71053823",
+    "sugang_mate/public_limits.py": "cce44d85c771cb0511db0f69b7d8a0bfd3167d5f709151651be57d365eeb7e3d",
+    "sugang_mate/public_http.py": "ff1a4a72db3b1d56f42d777d4878450772643ff81d567dc2d63cdbeb2072354f",
+    "requirements-online.txt": "af9840668b330a48d3aa32878ca9e704260604f42cffdaed75a014baee017f90",
+    "requirements.txt": "b429219535454963f99360b8bccca1bd788488c67b0392f725ce96dbb9a920d8"
+  },
+  "browser_checks": [
+    {
+      "id": "real_course_generation",
+      "passed": true,
+      "expected_course": "BDSC205",
+      "mode": "keyword_gemini",
+      "cache_hit": false,
+      "ui_total_seconds": 1.82,
+      "citation_present": true
+    },
+    {
+      "id": "real_course_comparison",
+      "passed": true,
+      "expected_courses": [
+        "BDSC201",
+        "BDSC203"
+      ]
+    },
+    {
+      "id": "followup_required_count",
+      "passed": true,
+      "expected_count": 1,
+      "expected_courses": [
+        "BDSC201"
+      ]
+    },
+    {
+      "id": "clear_conversation_and_evidence",
+      "passed": true
+    }
+  ],
+  "screenshot": {
+    "path": "docs/assets/demo-collected.png",
+    "sha256": "b57e056c631a0085712057a0d30e5211ac5861f26f5e03c39cd34a90f0f6f120",
+    "scope": "Public first screen, without conversation or syllabus excerpts"
+  },
+  "initial_external_attempt": {
+    "run_url": "https://github.com/JunH14/sugang-mate/actions/runs/34436823388",
+    "result": {
+      "schema_version": 1,
+      "checked_at": "2026-09-10T04:20:55.669726+00:00",
+      "status": "failed",
+      "checks": [],
+      "runtime": {
+        "os": "Linux",
+        "python": "3.12.14",
+        "github_actions": true
+      },
+      "authentication": {
+        "cookies_used": false,
+        "api_keys_used": false,
+        "login_used": false
+      },
+      "evidence_scope": "Anonymous hosted access and three behavioral checks; cached Gemini output is explicitly distinguished from fresh generation. No answer or source text is saved.",
+      "base_url": "https://sugang-mate.onrender.com",
+      "dataset": {
+        "dataset_kind": "collected",
+        "course_count": 25,
+        "dataset_sha256": "134c09d53cd3588555538459ee470fe9d540fcfe75b37c24d09c960929769b9f"
+      },
+      "anonymous_access": {
+        "configuration": true,
+        "public_chat_contract": true
+      },
+      "protected_dataset_file": {
+        "download_blocked": true,
+        "http_status": 403
+      },
+      "failure_code": "remote_chat_event_error"
+    },
+    "cause": "The validation client omitted a hidden Gradio State placeholder and supplied a session ID incompatible with the simple-call SSE route.",
+    "fix": "Include input State placeholder, let Gradio assign the simple-call session, and remove State from raw output. Two regression tests added; app answer code unchanged."
+  },
+  "scope_note": "One independent GitHub-hosted machine and three functional scenarios, plus browser checks. This does not measure all devices, sustained availability, concurrent load, or independent answer factuality. Server-side Gemini credentials are not supplied to visitors or the runner."
+}
