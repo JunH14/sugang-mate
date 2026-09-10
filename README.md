@@ -49,7 +49,8 @@
 | 자동 테스트 | 설정·캐시·대화 격리·공개 요청 제한·화면 등 **126개 통과**: [검사 기록](evaluation/release-checks.json) |
 | 실제 과목의 기존 질문 회귀 검사 | API와 답변 캐시를 끄고 **원본·서버용 정제본 각각 103/103개 조건 통과** |
 | 이전 Gemini 진단 | 가상·실제 과목 **16개 흐름 확인**, 생성 답변 **12개**의 원문 근거 대조 |
-| 실제 25개 공개 서버 | 로그인·방문자 API 키 없이 **3개 흐름 통과**, 재시작 후 동일 자료 유지: [확인 기록](evaluation/hosted-deployment-checks.json) |
+| 실제 25개 공개 서버 | 별도 GitHub 컴퓨터에서 로그인·방문자 API 키 없이 **4개 검사 통과**, 실제 Gemini 생성 포함: [최신 확인 기록](evaluation/chat-ui-checks.json) |
+| 채팅 화면 | PC·모바일 화면, 답변별 근거, 과목 전환·이어 묻기·새 대화 확인: [화면 검사 기록](evaluation/chat-ui-checks.json) |
 | 검색 방식 진단 | 30문항의 근거 포함 과목 Recall@5 chunks: 고정 길이 **50.0%**, 구역별 **33.3%** |
 
 공개 서버는 BM25·Gemini로 실행하며, 이전 실제 자료의 Chroma 검증은 별도 환경의 기록입니다. 기능 회귀·소수 API 질문·외부 접속 확인을 독립적인 정확도 점수로 해석하지 않습니다. [실제 API 검증](docs/live-api-validation.md) · [전체 평가 보고서](docs/evaluation.md)

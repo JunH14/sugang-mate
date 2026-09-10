@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-09-10T05:18:55.944381+00:00",
+  "checked_at_utc": "2026-09-10T05:43:31.186661+00:00",
   "scope": "Browser interaction checks of the new chat screen; these are functional checks, not a user study.",
   "local_browser": {
     "data_mode": "collected",
@@ -73,7 +73,167 @@
     "ui/chat.js": "9e6c291e8ceabcb5223dcc88b75241f2bd87c868ef0bb73ad03ac02c8b626c3b"
   },
   "hosted": {
-    "status": "pending deployment verification"
+    "status": "passed",
+    "base_url": "https://sugang-mate.onrender.com",
+    "runtime_commit": "47c446513c844c3cc5c424813721c9a69f476eff",
+    "deployment_id": "dep-dah44l942hec73en5340",
+    "deployment_status": "Deploy succeeded",
+    "local_development_server_stopped": true,
+    "browser_checks": {
+      "different_topic_then_explicit_comparison": {
+        "previous_course": "BDSC205",
+        "expected_comparison_courses": [
+          "BDSC201",
+          "BDSC203"
+        ],
+        "actual_comparison_courses": [
+          "BDSC201",
+          "BDSC203"
+        ],
+        "passed": true
+      },
+      "followup_filter": {
+        "expected_courses": [
+          "BDSC201"
+        ],
+        "actual_courses": [
+          "BDSC201"
+        ],
+        "passed": true
+      },
+      "earlier_answer_followup_after_topic_change": {
+        "expected_courses": [
+          "BDSC205"
+        ],
+        "actual_courses": [
+          "BDSC205"
+        ],
+        "passed": true
+      },
+      "all_four_answers_retain_their_own_sources": true,
+      "no_fallback_or_limit_warnings": true,
+      "new_conversation_clears_all_turns": true,
+      "first_screen_without_horizontal_overflow": true,
+      "gemini_browser_answer_note": "The first browser answer used a cache entry produced by fresh generation in the separate GitHub runner immediately before this check."
+    },
+    "independent_runner": {
+      "workflow_url": "https://github.com/JunH14/sugang-mate/actions/runs/34442016281",
+      "artifact_id": 10138269692,
+      "artifact_sha256": "24776366cc474e0e2b06eadcdb825feab89249183b9a05e96c6c140f909230ae",
+      "passed_checks": 4,
+      "total_checks": 4,
+      "legacy_chat": {
+        "schema_version": 1,
+        "checked_at": "2026-09-10T05:40:33.697695+00:00",
+        "status": "passed",
+        "checks": [
+          {
+            "id": "semantic_grounding",
+            "passed": true,
+            "seconds": 2.446,
+            "answer_nonempty": true,
+            "expected_course_evidence": "BDSC205",
+            "response_mode": "gemini",
+            "cache_hit": false,
+            "fresh_gemini_generation": true,
+            "fallback_or_limit_warning": false
+          },
+          {
+            "id": "course_schedule",
+            "passed": true,
+            "seconds": 0.537,
+            "answer_nonempty": true,
+            "expected_course_evidence": "BDSC201",
+            "response_mode": "schedule",
+            "cache_hit": false,
+            "fresh_gemini_generation": false,
+            "fallback_or_limit_warning": false
+          },
+          {
+            "id": "outside_scope",
+            "passed": true,
+            "seconds": 0.607,
+            "answer_nonempty": true,
+            "expected_course_evidence": null,
+            "response_mode": "outside_scope",
+            "cache_hit": false,
+            "fresh_gemini_generation": false,
+            "fallback_or_limit_warning": false
+          }
+        ],
+        "runtime": {
+          "os": "Linux",
+          "python": "3.12.14",
+          "github_actions": true
+        },
+        "authentication": {
+          "cookies_used": false,
+          "api_keys_used": false,
+          "login_used": false
+        },
+        "evidence_scope": "Anonymous hosted access and three behavioral checks; cached Gemini output is explicitly distinguished from fresh generation. No answer or source text is saved.",
+        "base_url": "https://sugang-mate.onrender.com",
+        "dataset": {
+          "dataset_kind": "collected",
+          "course_count": 25,
+          "dataset_sha256": "134c09d53cd3588555538459ee470fe9d540fcfe75b37c24d09c960929769b9f"
+        },
+        "anonymous_access": {
+          "configuration": true,
+          "public_chat_contract": true
+        },
+        "protected_dataset_file": {
+          "download_blocked": true,
+          "http_status": 403
+        }
+      },
+      "new_chat_screen_api": {
+        "schema_version": 1,
+        "checked_at": "2026-09-10T05:40:38.352156+00:00",
+        "status": "passed",
+        "checks": [
+          {
+            "id": "anonymous_json_schedule",
+            "passed": true,
+            "expected_course": "BDSC201",
+            "mode": "structured_schedule",
+            "source_count": 1,
+            "course_card_matches_source": true,
+            "private_fields_excluded": true,
+            "cache_hit": false,
+            "seconds": 1.109
+          }
+        ],
+        "runtime": {
+          "os": "Linux",
+          "python": "3.12.14",
+          "github_actions": true
+        },
+        "authentication": {
+          "cookies_used": false,
+          "api_keys_used": false,
+          "login_used": false
+        },
+        "evidence_scope": "Screen asset delivery and one stateless JSON timetable request. No answers or source excerpts are retained. Browser rendering is verified separately.",
+        "base_url": "https://sugang-mate.onrender.com",
+        "dataset": {
+          "dataset_kind": "collected",
+          "course_count": 25,
+          "dataset_sha256": "134c09d53cd3588555538459ee470fe9d540fcfe75b37c24d09c960929769b9f"
+        },
+        "chat_screen": {
+          "assets_present": true,
+          "stateless_json_api": true,
+          "visual_rendering_tested": false
+        }
+      }
+    },
+    "ci": {
+      "workflow_url": "https://github.com/JunH14/sugang-mate/actions/runs/34441838032",
+      "passed_jobs": 4,
+      "matrix": "Windows and Ubuntu, Python 3.11 and 3.12"
+    },
+    "scope_note": "Functional browser checks and anonymous remote requests, not a user study, load test, or guarantee for every device. The public code after this runtime commit differs only in documentation and aggregate evidence."
   },
   "app_sha256": "a3a75c5f7fa164ea5a302d980f68331d410abac52ec1dd081eec846920f8eb50",
   "initial_hosted_check": {
