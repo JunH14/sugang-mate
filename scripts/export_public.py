@@ -15,7 +15,7 @@ SCRIPT_FILES = ["collect_syllabi.py", "extract_texts.py", "build_vector_db.py",
                 "evaluate_rag.py", "stress_test_generated_queries.py", "analyze_data.py",
                 "audit_legacy_evaluation.py", "benchmark_retrieval.py",
                 "verify_release.py", "export_public.py", "record_validation.py", "validate_live_api.py",
-                "prepare_hosted_data.py", "check_hosted_demo.py"]
+                "prepare_hosted_data.py", "check_hosted_demo.py", "check_chat_screen.py"]
 SECRET_PATTERNS = [
     re.compile(r"AIza[0-9A-Za-z_-]{30,}"),
     re.compile(r"gh[pousr]_[0-9A-Za-z]{25,}"),

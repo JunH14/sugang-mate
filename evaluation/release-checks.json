@@ -1,9 +1,9 @@
 {
-  "checked_at_utc": "2026-09-10T05:16:06.494065+00:00",
+  "checked_at_utc": "2026-09-10T05:31:19.569448+00:00",
   "platform": "Windows",
   "python": "3.12.14",
   "unit_tests": {
-    "passed": 115,
+    "passed": 126,
     "failed": 0
   },
   "public_verification": {
@@ -11,12 +11,12 @@
     "dataset": "synthetic 6-course sample",
     "scenario_count": 5,
     "mode": "keyword_extract",
-    "python_sources_parsed": 37,
+    "python_sources_parsed": 40,
     "gradio_config": "built",
     "external_model_calls": 0
   },
   "code_sha256": {
-    "app.py": "090a0eac9ec381cc9474e2a8f4cf9821976ddacd8436ee2ba541d6f5da2a191a",
+    "app.py": "a3a75c5f7fa164ea5a302d980f68331d410abac52ec1dd081eec846920f8eb50",
     "gradio_app.py": "39409594bb82410db3e5a035a6ee136af9142461c9afad700fc4c8d17b9528c6",
     "retrieval_core.py": "d5c15d3e01f90c4286f5543e7bb7268d0d74e3a949e66d2a81aaf34c2072827b",
     "run_demo.py": "5307ebd55692c3d95fd1ffeffca924fa332ed39d34dc58be3b288b4ea50ce5f4",
@@ -25,10 +25,11 @@
     "scripts/audit_legacy_evaluation.py": "d43c3f37fe7f384a8a6dfad1cfd73c8b77d98d1f331bd7b75cdb4ab33eb9972d",
     "scripts/benchmark_retrieval.py": "ebf7e9a0fbbede679c5036178dfcd763a5bdb394a14ddc7c2f409753127bfc60",
     "scripts/build_vector_db.py": "7bea47e9a44ada806654ad20d86626e765171dd0b024a25c2352f595f4f8594d",
+    "scripts/check_chat_screen.py": "254015a3ea894b339e0126a33222c0b5aced416ded38cbaf7c7f150933996fa0",
     "scripts/check_hosted_demo.py": "534bea8ada61792607a0de5e70e6f629d7d626b21a96b7d75254713e4c7a1d81",
     "scripts/collect_syllabi.py": "ebf709ca0084c3a99bee28220a2fb4594fc7dc65cea2060fabdcc0714add90b0",
     "scripts/evaluate_rag.py": "020e4ee13307b4e307005d64b1b30ae2a7a4915a02303c51683f1ffb016f7985",
-    "scripts/export_public.py": "3c12fdb0bc8854d95ac6450b0da3c00cde9eaea1d692bebe4061db1838dd0fda",
+    "scripts/export_public.py": "ebc4dd61620200eed14f63c7f2dfa8c422e3a1b4393289828e8678a73ce0126f",
     "scripts/extract_texts.py": "6ec3454233c754fd3b00ea60767ddb39145d0035c870207cd83f2369a61d453b",
     "scripts/prepare_hosted_data.py": "df0088722ba429179371b94e0fce0454021222d5664fe96b46cd67ee563d5a32",
     "scripts/record_validation.py": "00c99458b71ee2ae53e16c1b9ed6104c38c1e271f2e9fdb6e758d2dd86f02664",
@@ -43,10 +44,12 @@
     "sugang_mate/public_limits.py": "cce44d85c771cb0511db0f69b7d8a0bfd3167d5f709151651be57d365eeb7e3d",
     "tests/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
     "tests/test_chat_presentation.py": "7efd9313e217e8757108adc246f1930fea02b9d2359a96346a939bc7240848ad",
+    "tests/test_chat_screen_smoke.py": "57da6831fd9f0701470585b8b7419b281a4077959669d57c3da717ac86770c8e",
     "tests/test_chat_ui.py": "449dcb8b24b7508246530780b98738d2ac8f37a24bdbf627e59b8133ead8789e",
     "tests/test_core.py": "1e29d6931bb350a0d7c29309894d6d091ea45b431042234ed5ba9ff0685e1745",
     "tests/test_demo.py": "3c528ba3b89b0d3ff3026c7d2b83d3bfa6baac8087a6a237076c6be365f20ad3",
     "tests/test_evaluation.py": "37667fa4325088ae30b6ac3575ec0366ea013653de08d2069630c0a8baad5890",
+    "tests/test_explicit_scope.py": "73ce8c4125edb9ee8c4efc646278b84c24fbeb0442a029e9b0c5472cb31362a1",
     "tests/test_hosted_data.py": "d0924640b13a6f97744888a3e00725fb5cff7570d559d1e836adbeef533b46bc",
     "tests/test_hosted_smoke.py": "2fa8e104ec1903e66d60928c2d45ae0af0b4011d1a03b04236670884666d90d4",
     "tests/test_live_core.py": "d72d3032becedcf7e04d057c8139a47a422e81ebbde75172b0c8bf32943b18f0",

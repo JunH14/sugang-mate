@@ -1,11 +1,11 @@
 {
   "scope": "Existing functional regression assertions, not independent answer factuality",
   "summary": {
-    "created_at": "2026-09-10 14:16:08",
+    "created_at": "2026-09-10 14:31:21",
     "case_count": 103,
     "average_seconds": 0.013,
     "median_seconds": 0.002,
-    "max_seconds": 0.038,
+    "max_seconds": 0.04,
     "expected_retrieval_accuracy": 1.0,
     "expected_mode_accuracy": 1.0,
     "mean_recall_at_k": 1.0,
@@ -22,9 +22,9 @@
   "offline": true,
   "answer_cache_disabled": true,
   "corpus_sha256": "6584e2b8bb13fd9147c035fa9c9510475412c9e26f7ddabcfb12f0da285ed6f1",
-  "app_sha256": "090a0eac9ec381cc9474e2a8f4cf9821976ddacd8436ee2ba541d6f5da2a191a",
+  "app_sha256": "a3a75c5f7fa164ea5a302d980f68331d410abac52ec1dd081eec846920f8eb50",
   "evaluator_sha256": "020e4ee13307b4e307005d64b1b30ae2a7a4915a02303c51683f1ffb016f7985",
-  "private_result_sha256": "e251833fbd4fc5584c1d57cb5ebf76e66fd500c1c1357cff20876d0b939a7aa0",
+  "private_result_sha256": "689698a402bbced4b64e8ea630b9dd6401a7795e28c50837be99137afa522349",
   "result_mode_counts": {
     "structured_course_assessment": 3,
     "extractive": 2,

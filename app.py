@@ -768,6 +768,19 @@ class SyllabusRag:
         resolved_question, context_course = resolve_contextual_question(
             question, conversation_history, self.syllabi
         )
+        explicit_course_codes = set(extract_course_codes(question)) or {
+            course.course_code
+            for course in explicitly_requested_courses(question, self.syllabi)
+        }
+        prior_course_reference = contains_phrase(question, (
+            "그 과목", "이 과목", "저 과목", "해당 과목", "위 과목",
+            "그 수업", "이 수업", "저 수업", "해당 수업", "위 수업",
+            "그거", "이거", "저거", "그중", "이중", "나머지",
+            "그 목록", "이 목록", "위 목록",
+        ))
+        needs_course_context = not explicit_course_codes or (
+            len(explicit_course_codes) == 1 and prior_course_reference
+        )
         context_metadata: dict[str, Any] | None = None
         if context_course is not None:
             context_metadata = {
@@ -777,7 +790,10 @@ class SyllabusRag:
                 "original_question": question,
                 "resolved_question": resolved_question,
             }
-        elif conversation_history:
+        # Explicit courses define a new scope unless another course remains
+        # implicit, as in "compare that course with DEMO201". Detail words
+        # such as "assessment" alone must not bring back the previous topic.
+        elif conversation_history and needs_course_context:
             previous_courses = latest_assistant_courses(
                 conversation_history, self.syllabi
             )

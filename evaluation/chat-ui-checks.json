@@ -37,14 +37,17 @@
     "model_call_note": "A local model request encountered a ConnectError in the restricted environment; the grounded fallback and its notice rendered correctly. Hosted model verification is recorded separately."
   },
   "automated_checks": {
-    "unit_tests_passed": 115,
+    "unit_tests_passed": 126,
     "unit_tests_failed": 0,
     "private_original_regression_passed": 103,
     "private_original_regression_total": 103,
     "javascript_syntax": "node --check ui/chat.js passed",
     "legacy_chat_api_contract": "preserved",
     "json_endpoint": "/gradio_api/call/respond",
-    "shared_request_and_concurrency_limits": true
+    "shared_request_and_concurrency_limits": true,
+    "hosted_sanitized_regression_passed": 103,
+    "hosted_sanitized_regression_total": 103,
+    "explicit_course_scope_regression": "Seven synthetic cases cover single/two explicit courses, subsequent filters, and retained pronoun references."
   },
   "screenshots": {
     "docs/assets/demo-collected.png": {
@@ -71,5 +74,19 @@
   },
   "hosted": {
     "status": "pending deployment verification"
+  },
+  "app_sha256": "a3a75c5f7fa164ea5a302d980f68331d410abac52ec1dd081eec846920f8eb50",
+  "initial_hosted_check": {
+    "runtime_commit": "d1c87942d233a5a98b305ec120c619e68b83fddc",
+    "deployment_id": "dep-dah3tept0dsc73efdjmg",
+    "gemini_generation": {
+      "passed": true,
+      "model": "gemini-3.1-flash-lite",
+      "total_seconds": 2.13,
+      "generation_seconds": 1.77,
+      "cache_hit": false,
+      "warning": false
+    },
+    "finding": "An explicit course comparison after a different topic inherited the earlier course. Corrected with dedicated regression cases before final verification."
   }
 }
