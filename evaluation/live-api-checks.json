@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "run_started_at_utc": "2026-09-10T02:40:21.995653+00:00",
-  "run_finished_at_utc": "2026-09-10T02:47:05.064816+00:00",
+  "run_started_at_utc": "2026-09-10T02:50:52.767082+00:00",
+  "run_finished_at_utc": "2026-09-10T02:54:31.297683+00:00",
   "environment": {
     "python": "3.12.14",
     "platform": "Windows",
@@ -14,44 +14,52 @@
     "timeout_seconds": 20,
     "sdk_attempts": 1,
     "app_attempts": 1,
-    "max_sdk_dispatches": 50,
+    "max_sdk_dispatches": 35,
     "answer_cache_disabled": true,
+    "index_batch_size": 16,
     "sample_search": "BM25",
     "private_search": "Chroma + BM25 + MMR",
     "with_private_corpus": true
   },
   "artifacts": {
-    "private_details_sha256": "5591d27775641386bb5629958fded14bbe320341772a7dec3e28c2283e5bff6d",
-    "app_sha256": "f9298650a449e3b923911dc50aea91322774317eb017aacce8d794f50445a14c",
-    "validator_sha256": "6ce6eb29ce3f42c4e512a893795fe435fb34149cfa1b5780712808d5d77ab700",
+    "private_details_sha256": "ed4347ece285ae124afc1b24ad12e3b3ec04303a783bf59751125976cb6e83e4",
+    "app_sha256": "090a0eac9ec381cc9474e2a8f4cf9821976ddacd8436ee2ba541d6f5da2a191a",
+    "validator_sha256": "401a0b3e39bf7503c22611c1875b55a7f36492f0caa913f644080b75c1c64b76",
     "sample_dataset_sha256": "f0b2b292d32887d4733c2f20a18e2c5b0a55828ef869f13cf75f2d9891abfd8d",
-    "sample_validator_sha256": "bd8359d1aa8e4a006f0ce6e70719bfd4445fc9992ad98d1f811a8ab6e4164762",
     "private_dataset_sha256": "6584e2b8bb13fd9147c035fa9c9510475412c9e26f7ddabcfb12f0da285ed6f1"
   },
-  "index": null,
-  "run_error": {
-    "error_type": "ClientError",
-    "http_status": 429
+  "index": {
+    "course_count": 25,
+    "chunk_count": 307,
+    "dataset_sha256": "6584e2b8bb13fd9147c035fa9c9510475412c9e26f7ddabcfb12f0da285ed6f1",
+    "embedding_model": "gemini-embedding-001",
+    "index_count": 307,
+    "reused_verified_index": false,
+    "batch_size": 16,
+    "batch_spacing_seconds": 35,
+    "resumed_chunk_count": 224,
+    "status": "ready"
   },
+  "run_error": null,
   "summary": {
-    "case_count": 8,
-    "technical_passed": 8,
-    "source_reviewed": 8,
-    "source_review_passed": 6,
-    "sdk_dispatch_count": 15,
-    "sdk_success_count": 13,
-    "sdk_failure_count": 2,
+    "case_count": 16,
+    "technical_passed": 16,
+    "source_reviewed": 16,
+    "source_review_passed": 15,
+    "sdk_dispatch_count": 24,
+    "sdk_success_count": 24,
+    "sdk_failure_count": 0,
     "operations": {
-      "generate_content": 6,
-      "embed_content": 9
+      "generate_content": 12,
+      "embed_content": 12
     },
     "token_usage_reported_by_sdk": {
-      "prompt_token_count": 2320,
-      "candidates_token_count": 451,
-      "total_token_count": 2771
+      "prompt_token_count": 9177,
+      "candidates_token_count": 969,
+      "total_token_count": 10146
     },
-    "generation_cases_wall_median_seconds": 2.255,
-    "generation_cases_wall_max_seconds": 4.426
+    "generation_cases_wall_median_seconds": 2.896,
+    "generation_cases_wall_max_seconds": 3.948
   },
   "cases": [
     {
@@ -66,7 +74,7 @@
       ],
       "expected_generation": true,
       "mode": "keyword_gemini",
-      "wall_seconds": 2.321,
+      "wall_seconds": 2.936,
       "sdk_event_ids": [
         1
       ],
@@ -84,7 +92,8 @@
       "source_review": {
         "id": "S01",
         "status": "passed",
-        "note": "교과목개요의 파이썬·판다스·결측치 처리와 답변이 일치한다.",
+        "factual_claims_supported": true,
+        "note": "교과목개요의 파이썬·판다스·결측치 처리와 학습목표의 CSV 불러오기가 답변을 뒷받침한다.",
         "reviewer": "AI-assisted source review"
       }
     },
@@ -100,7 +109,7 @@
       ],
       "expected_generation": true,
       "mode": "keyword_gemini",
-      "wall_seconds": 2.632,
+      "wall_seconds": 3.311,
       "sdk_event_ids": [
         2
       ],
@@ -118,6 +127,7 @@
       "source_review": {
         "id": "S02",
         "status": "passed",
+        "factual_claims_supported": true,
         "note": "학습목표에 교차검증과 데이터 누수가 명시되어 있으며 이를 답변했다.",
         "reviewer": "AI-assisted source review"
       }
@@ -134,7 +144,7 @@
       ],
       "expected_generation": true,
       "mode": "keyword_gemini",
-      "wall_seconds": 1.612,
+      "wall_seconds": 1.496,
       "sdk_event_ids": [
         3
       ],
@@ -151,8 +161,9 @@
       "exception": null,
       "source_review": {
         "id": "S03",
-        "status": "needs_improvement",
-        "note": "과목은 맞지만 개요만 검색되어 학습목표의 감성 분석·텍스트 분류를 놓치고 미확인으로 답변했다.",
+        "status": "passed",
+        "factual_claims_supported": true,
+        "note": "보충된 학습목표의 감성 분석·텍스트 분류를 근거로 답변해 최초 실행의 근거 누락을 해결했다.",
         "reviewer": "AI-assisted source review"
       }
     },
@@ -168,7 +179,7 @@
       ],
       "expected_generation": true,
       "mode": "keyword_gemini",
-      "wall_seconds": 2.189,
+      "wall_seconds": 2.087,
       "sdk_event_ids": [
         4
       ],
@@ -186,7 +197,8 @@
       "source_review": {
         "id": "S04",
         "status": "passed",
-        "note": "학습목표의 시각적 인코딩·대시보드 실습 근거와 과목을 정확히 연결했다.",
+        "factual_claims_supported": true,
+        "note": "학습목표의 시각적 인코딩·대시보드 실습과 해당 과목을 연결했다.",
         "reviewer": "AI-assisted source review"
       }
     },
@@ -204,7 +216,7 @@
       ],
       "expected_generation": true,
       "mode": "keyword_gemini",
-      "wall_seconds": 1.298,
+      "wall_seconds": 2.084,
       "sdk_event_ids": [
         5
       ],
@@ -221,8 +233,9 @@
       "exception": null,
       "source_review": {
         "id": "S05",
-        "status": "needs_improvement",
-        "note": "개별 사실은 근거에 있으나 데이터분석입문의 핵심 내용 대신 두 과목에 공통인 주차 계획을 비교에 사용해 차이 설명이 부족하다.",
+        "status": "passed",
+        "factual_claims_supported": true,
+        "note": "두 과목의 개요·학습목표를 바탕으로 표 데이터 정제와 문서 검색·분류의 차이를 두 문장으로 비교했다.",
         "reviewer": "AI-assisted source review"
       }
     },
@@ -238,7 +251,7 @@
       ],
       "expected_generation": true,
       "mode": "keyword_gemini",
-      "wall_seconds": 4.426,
+      "wall_seconds": 3.948,
       "sdk_event_ids": [
         6
       ],
@@ -256,6 +269,7 @@
       "source_review": {
         "id": "S06",
         "status": "passed",
+        "factual_claims_supported": true,
         "note": "전체 가상 원문에 선수과목 지정이 없으며 미확인으로 답변했다.",
         "reviewer": "AI-assisted source review"
       }
@@ -274,7 +288,7 @@
       ],
       "expected_generation": false,
       "mode": "structured_course_assessment",
-      "wall_seconds": 0.001,
+      "wall_seconds": 0.0,
       "sdk_event_ids": [],
       "checks": {
         "nonempty_answer": true,
@@ -290,6 +304,7 @@
       "source_review": {
         "id": "S07",
         "status": "passed",
+        "factual_claims_supported": true,
         "note": "두 과목의 평가 비율과 개인 과제·개인 프로젝트 구분이 원문과 일치한다.",
         "reviewer": "AI-assisted source review"
       }
@@ -322,7 +337,288 @@
       "source_review": {
         "id": "S08",
         "status": "passed",
+        "factual_claims_supported": true,
         "note": "직전 비교의 두 과목 중 전공필수인 DEMO201 하나만 남겼다.",
+        "reviewer": "AI-assisted source review"
+      }
+    },
+    {
+      "id": "P01",
+      "dataset": "private",
+      "question": "BDSC205에서 SAS를 다룬다는 근거가 있어?",
+      "expected_sources": [
+        "BDSC205"
+      ],
+      "actual_sources": [
+        "BDSC205"
+      ],
+      "expected_generation": true,
+      "mode": "chroma_gemini",
+      "wall_seconds": 3.567,
+      "sdk_event_ids": [
+        13,
+        14
+      ],
+      "checks": {
+        "nonempty_answer": true,
+        "expected_source_set": true,
+        "cache_disabled": true,
+        "generation_dispatch_matches_expected": true,
+        "no_failed_sdk_calls": true,
+        "expected_query_embedding": true,
+        "expected_generation_mode": true
+      },
+      "technical_passed": true,
+      "exception": null,
+      "source_review": {
+        "id": "P01",
+        "status": "passed",
+        "factual_claims_supported": true,
+        "note": "SAS 관련 교과목개요·학습목표·교재 목록의 근거와 답변이 일치한다.",
+        "reviewer": "AI-assisted source review"
+      }
+    },
+    {
+      "id": "P02",
+      "dataset": "private",
+      "question": "BDSC155의 미분과 적분을 다루는 목적을 설명해줘",
+      "expected_sources": [
+        "BDSC155"
+      ],
+      "actual_sources": [
+        "BDSC155"
+      ],
+      "expected_generation": true,
+      "mode": "chroma_gemini",
+      "wall_seconds": 3.15,
+      "sdk_event_ids": [
+        15,
+        16
+      ],
+      "checks": {
+        "nonempty_answer": true,
+        "expected_source_set": true,
+        "cache_disabled": true,
+        "generation_dispatch_matches_expected": true,
+        "no_failed_sdk_calls": true,
+        "expected_query_embedding": true,
+        "expected_generation_mode": true
+      },
+      "technical_passed": true,
+      "exception": null,
+      "source_review": {
+        "id": "P02",
+        "status": "passed",
+        "factual_claims_supported": true,
+        "note": "전공 이해를 위한 도구, 미분·적분 개념 활용, 실생활 응용 문제 해결 목적이 원문에 명시되어 있다.",
+        "reviewer": "AI-assisted source review"
+      }
+    },
+    {
+      "id": "P03",
+      "dataset": "private",
+      "question": "BDSC331은 프로그래밍 경험이 없어도 수강할 수 있어?",
+      "expected_sources": [
+        "BDSC331"
+      ],
+      "actual_sources": [
+        "BDSC331"
+      ],
+      "expected_generation": true,
+      "mode": "chroma_gemini",
+      "wall_seconds": 2.838,
+      "sdk_event_ids": [
+        17,
+        18
+      ],
+      "checks": {
+        "nonempty_answer": true,
+        "expected_source_set": true,
+        "cache_disabled": true,
+        "generation_dispatch_matches_expected": true,
+        "no_failed_sdk_calls": true,
+        "expected_query_embedding": true,
+        "expected_generation_mode": true
+      },
+      "technical_passed": true,
+      "exception": null,
+      "source_review": {
+        "id": "P03",
+        "status": "passed",
+        "factual_claims_supported": true,
+        "note": "수강요건에 프로그래밍 경험이 없어도 수강 가능하다고 명시되어 있다.",
+        "reviewer": "AI-assisted source review"
+      }
+    },
+    {
+      "id": "P04",
+      "dataset": "private",
+      "question": "BDSC401의 강의계획서만 근거로 딥러닝이론의 특징을 두 문장으로 요약해줘",
+      "expected_sources": [
+        "BDSC401"
+      ],
+      "actual_sources": [
+        "BDSC401"
+      ],
+      "expected_generation": true,
+      "mode": "chroma_gemini",
+      "wall_seconds": 2.855,
+      "sdk_event_ids": [
+        19,
+        20
+      ],
+      "checks": {
+        "nonempty_answer": true,
+        "expected_source_set": true,
+        "cache_disabled": true,
+        "generation_dispatch_matches_expected": true,
+        "no_failed_sdk_calls": true,
+        "expected_query_embedding": true,
+        "expected_generation_mode": true
+      },
+      "technical_passed": true,
+      "exception": null,
+      "source_review": {
+        "id": "P04",
+        "status": "passed",
+        "factual_claims_supported": true,
+        "note": "신경망 방법론, 창의력·문제 해결 역량, 이론과 실제 자료 실습에 대한 내용이 원문에서 확인된다.",
+        "reviewer": "AI-assisted source review"
+      }
+    },
+    {
+      "id": "P05",
+      "dataset": "private",
+      "question": "BDSC201에서 사용하는 교재를 반드시 새 책으로 사야 해?",
+      "expected_sources": [
+        "BDSC201"
+      ],
+      "actual_sources": [
+        "BDSC201"
+      ],
+      "expected_generation": true,
+      "mode": "chroma_gemini",
+      "wall_seconds": 3.138,
+      "sdk_event_ids": [
+        21,
+        22
+      ],
+      "checks": {
+        "nonempty_answer": true,
+        "expected_source_set": true,
+        "cache_disabled": true,
+        "generation_dispatch_matches_expected": true,
+        "no_failed_sdk_calls": true,
+        "expected_query_embedding": true,
+        "expected_generation_mode": true
+      },
+      "technical_passed": true,
+      "exception": null,
+      "source_review": {
+        "id": "P05",
+        "status": "passed",
+        "factual_claims_supported": true,
+        "note": "전체 정제 원문에 새 책 구매 의무가 명시되지 않아 미확인으로 답변했다.",
+        "reviewer": "AI-assisted source review"
+      }
+    },
+    {
+      "id": "P06",
+      "dataset": "private",
+      "question": "BDSC121에서 사용하는 프로그래밍 언어가 뭐야?",
+      "expected_sources": [
+        "BDSC121"
+      ],
+      "actual_sources": [
+        "BDSC121"
+      ],
+      "expected_generation": true,
+      "mode": "chroma_gemini",
+      "wall_seconds": 1.834,
+      "sdk_event_ids": [
+        23,
+        24
+      ],
+      "checks": {
+        "nonempty_answer": true,
+        "expected_source_set": true,
+        "cache_disabled": true,
+        "generation_dispatch_matches_expected": true,
+        "no_failed_sdk_calls": true,
+        "expected_query_embedding": true,
+        "expected_generation_mode": true
+      },
+      "technical_passed": true,
+      "exception": null,
+      "source_review": {
+        "id": "P06",
+        "status": "passed",
+        "factual_claims_supported": true,
+        "note": "전체 정제 원문에서 사용 프로그래밍 언어를 확인할 수 없어 언어를 추측하지 않았다.",
+        "reviewer": "AI-assisted source review"
+      }
+    },
+    {
+      "id": "P07",
+      "dataset": "private",
+      "question": "BDSC201과 BDSC203의 평가방식을 비교해줘",
+      "expected_sources": [
+        "BDSC201",
+        "BDSC203"
+      ],
+      "actual_sources": [
+        "BDSC201",
+        "BDSC203"
+      ],
+      "expected_generation": false,
+      "mode": "structured_course_assessment",
+      "wall_seconds": 0.002,
+      "sdk_event_ids": [],
+      "checks": {
+        "nonempty_answer": true,
+        "expected_source_set": true,
+        "cache_disabled": true,
+        "generation_dispatch_matches_expected": true,
+        "no_failed_sdk_calls": true,
+        "expected_query_embedding": true,
+        "expected_generation_mode": true
+      },
+      "technical_passed": true,
+      "exception": null,
+      "source_review": {
+        "id": "P07",
+        "status": "needs_improvement",
+        "factual_claims_supported": true,
+        "note": "기대 과목과 평가 수치는 원문에 부합하지만 HWP 추출 과정의 깨진 문자와 불필요한 표 문구가 그대로 보여 가독성 개선이 남아 있다.",
+        "reviewer": "AI-assisted source review"
+      }
+    },
+    {
+      "id": "P08",
+      "dataset": "private",
+      "question": "다음 학기 등록금이 얼마야?",
+      "expected_sources": [],
+      "actual_sources": [],
+      "expected_generation": false,
+      "mode": "out_of_scope",
+      "wall_seconds": 0.001,
+      "sdk_event_ids": [],
+      "checks": {
+        "nonempty_answer": true,
+        "expected_source_set": true,
+        "cache_disabled": true,
+        "generation_dispatch_matches_expected": true,
+        "no_failed_sdk_calls": true,
+        "expected_query_embedding": true,
+        "expected_generation_mode": true
+      },
+      "technical_passed": true,
+      "exception": null,
+      "source_review": {
+        "id": "P08",
+        "status": "passed",
+        "factual_claims_supported": true,
+        "note": "강의계획서 범위 밖의 등록금 질문에 금액을 추측하지 않고 공식 공지 확인을 안내했다.",
         "reviewer": "AI-assisted source review"
       }
     }
@@ -336,13 +632,13 @@
       "model": "gemini-3.1-flash-lite",
       "status": "success",
       "usage": {
-        "prompt_token_count": 289,
-        "candidates_token_count": 64,
-        "total_token_count": 353
+        "prompt_token_count": 389,
+        "candidates_token_count": 84,
+        "total_token_count": 473
       },
       "model_version": "gemini-3.1-flash-lite",
       "nonempty_text": true,
-      "seconds": 2.313
+      "seconds": 2.928
     },
     {
       "id": 2,
@@ -352,13 +648,13 @@
       "model": "gemini-3.1-flash-lite",
       "status": "success",
       "usage": {
-        "prompt_token_count": 298,
-        "candidates_token_count": 71,
-        "total_token_count": 369
+        "prompt_token_count": 395,
+        "candidates_token_count": 81,
+        "total_token_count": 476
       },
       "model_version": "gemini-3.1-flash-lite",
       "nonempty_text": true,
-      "seconds": 2.625
+      "seconds": 3.303
     },
     {
       "id": 3,
@@ -368,13 +664,13 @@
       "model": "gemini-3.1-flash-lite",
       "status": "success",
       "usage": {
-        "prompt_token_count": 292,
-        "candidates_token_count": 99,
-        "total_token_count": 391
+        "prompt_token_count": 395,
+        "candidates_token_count": 67,
+        "total_token_count": 462
       },
       "model_version": "gemini-3.1-flash-lite",
       "nonempty_text": true,
-      "seconds": 1.606
+      "seconds": 1.489
     },
     {
       "id": 4,
@@ -384,13 +680,13 @@
       "model": "gemini-3.1-flash-lite",
       "status": "success",
       "usage": {
-        "prompt_token_count": 299,
-        "candidates_token_count": 75,
-        "total_token_count": 374
+        "prompt_token_count": 397,
+        "candidates_token_count": 59,
+        "total_token_count": 456
       },
       "model_version": "gemini-3.1-flash-lite",
       "nonempty_text": true,
-      "seconds": 2.183
+      "seconds": 2.08
     },
     {
       "id": 5,
@@ -400,13 +696,13 @@
       "model": "gemini-3.1-flash-lite",
       "status": "success",
       "usage": {
-        "prompt_token_count": 669,
-        "candidates_token_count": 101,
-        "total_token_count": 770
+        "prompt_token_count": 867,
+        "candidates_token_count": 81,
+        "total_token_count": 948
       },
       "model_version": "gemini-3.1-flash-lite",
       "nonempty_text": true,
-      "seconds": 1.29
+      "seconds": 2.076
     },
     {
       "id": 6,
@@ -416,13 +712,13 @@
       "model": "gemini-3.1-flash-lite",
       "status": "success",
       "usage": {
-        "prompt_token_count": 473,
+        "prompt_token_count": 671,
         "candidates_token_count": 41,
-        "total_token_count": 514
+        "total_token_count": 712
       },
       "model_version": "gemini-3.1-flash-lite",
       "nonempty_text": true,
-      "seconds": 4.42
+      "seconds": 3.942
     },
     {
       "id": 7,
@@ -432,13 +728,13 @@
       "model": "gemini-embedding-001",
       "status": "success",
       "usage": {},
-      "vector_count": 32,
+      "vector_count": 16,
       "dimensions": [
         3072
       ],
       "finite_vectors": true,
       "billable_character_count": null,
-      "seconds": 1.858
+      "seconds": 1.437
     },
     {
       "id": 8,
@@ -448,13 +744,13 @@
       "model": "gemini-embedding-001",
       "status": "success",
       "usage": {},
-      "vector_count": 32,
+      "vector_count": 16,
       "dimensions": [
         3072
       ],
       "finite_vectors": true,
       "billable_character_count": null,
-      "seconds": 2.013
+      "seconds": 1.585
     },
     {
       "id": 9,
@@ -462,10 +758,15 @@
       "operation": "embed_content",
       "purpose": "RETRIEVAL_DOCUMENT",
       "model": "gemini-embedding-001",
-      "status": "failed",
-      "error_type": "ClientError",
-      "http_status": 429,
-      "seconds": 1.193
+      "status": "success",
+      "usage": {},
+      "vector_count": 16,
+      "dimensions": [
+        3072
+      ],
+      "finite_vectors": true,
+      "billable_character_count": null,
+      "seconds": 1.747
     },
     {
       "id": 10,
@@ -475,13 +776,13 @@
       "model": "gemini-embedding-001",
       "status": "success",
       "usage": {},
-      "vector_count": 32,
+      "vector_count": 16,
       "dimensions": [
         3072
       ],
       "finite_vectors": true,
       "billable_character_count": null,
-      "seconds": 1.93
+      "seconds": 1.528
     },
     {
       "id": 11,
@@ -491,13 +792,13 @@
       "model": "gemini-embedding-001",
       "status": "success",
       "usage": {},
-      "vector_count": 32,
+      "vector_count": 16,
       "dimensions": [
         3072
       ],
       "finite_vectors": true,
       "billable_character_count": null,
-      "seconds": 1.959
+      "seconds": 1.65
     },
     {
       "id": 12,
@@ -507,56 +808,205 @@
       "model": "gemini-embedding-001",
       "status": "success",
       "usage": {},
-      "vector_count": 32,
+      "vector_count": 3,
       "dimensions": [
         3072
       ],
       "finite_vectors": true,
       "billable_character_count": null,
-      "seconds": 1.86
+      "seconds": 0.706
     },
     {
       "id": 13,
-      "phase": "index_build",
+      "phase": "P01",
       "operation": "embed_content",
-      "purpose": "RETRIEVAL_DOCUMENT",
+      "purpose": "RETRIEVAL_QUERY",
       "model": "gemini-embedding-001",
       "status": "success",
       "usage": {},
-      "vector_count": 32,
+      "vector_count": 1,
       "dimensions": [
         3072
       ],
       "finite_vectors": true,
       "billable_character_count": null,
-      "seconds": 1.934
+      "seconds": 0.406
     },
     {
       "id": 14,
-      "phase": "index_build",
+      "phase": "P01",
+      "operation": "generate_content",
+      "purpose": "answer",
+      "model": "gemini-3.1-flash-lite",
+      "status": "success",
+      "usage": {
+        "prompt_token_count": 714,
+        "candidates_token_count": 164,
+        "total_token_count": 878
+      },
+      "model_version": "gemini-3.1-flash-lite",
+      "nonempty_text": true,
+      "seconds": 3.095
+    },
+    {
+      "id": 15,
+      "phase": "P02",
       "operation": "embed_content",
-      "purpose": "RETRIEVAL_DOCUMENT",
+      "purpose": "RETRIEVAL_QUERY",
       "model": "gemini-embedding-001",
       "status": "success",
       "usage": {},
-      "vector_count": 32,
+      "vector_count": 1,
       "dimensions": [
         3072
       ],
       "finite_vectors": true,
       "billable_character_count": null,
-      "seconds": 1.966
+      "seconds": 0.391
     },
     {
-      "id": 15,
-      "phase": "index_build",
+      "id": 16,
+      "phase": "P02",
+      "operation": "generate_content",
+      "purpose": "answer",
+      "model": "gemini-3.1-flash-lite",
+      "status": "success",
+      "usage": {
+        "prompt_token_count": 870,
+        "candidates_token_count": 143,
+        "total_token_count": 1013
+      },
+      "model_version": "gemini-3.1-flash-lite",
+      "nonempty_text": true,
+      "seconds": 2.696
+    },
+    {
+      "id": 17,
+      "phase": "P03",
       "operation": "embed_content",
-      "purpose": "RETRIEVAL_DOCUMENT",
+      "purpose": "RETRIEVAL_QUERY",
       "model": "gemini-embedding-001",
-      "status": "failed",
-      "error_type": "ClientError",
-      "http_status": 429,
-      "seconds": 1.126
+      "status": "success",
+      "usage": {},
+      "vector_count": 1,
+      "dimensions": [
+        3072
+      ],
+      "finite_vectors": true,
+      "billable_character_count": null,
+      "seconds": 0.39
+    },
+    {
+      "id": 18,
+      "phase": "P03",
+      "operation": "generate_content",
+      "purpose": "answer",
+      "model": "gemini-3.1-flash-lite",
+      "status": "success",
+      "usage": {
+        "prompt_token_count": 823,
+        "candidates_token_count": 71,
+        "total_token_count": 894
+      },
+      "model_version": "gemini-3.1-flash-lite",
+      "nonempty_text": true,
+      "seconds": 2.375
+    },
+    {
+      "id": 19,
+      "phase": "P04",
+      "operation": "embed_content",
+      "purpose": "RETRIEVAL_QUERY",
+      "model": "gemini-embedding-001",
+      "status": "success",
+      "usage": {},
+      "vector_count": 1,
+      "dimensions": [
+        3072
+      ],
+      "finite_vectors": true,
+      "billable_character_count": null,
+      "seconds": 0.376
+    },
+    {
+      "id": 20,
+      "phase": "P04",
+      "operation": "generate_content",
+      "purpose": "answer",
+      "model": "gemini-3.1-flash-lite",
+      "status": "success",
+      "usage": {
+        "prompt_token_count": 1873,
+        "candidates_token_count": 83,
+        "total_token_count": 1956
+      },
+      "model_version": "gemini-3.1-flash-lite",
+      "nonempty_text": true,
+      "seconds": 2.371
+    },
+    {
+      "id": 21,
+      "phase": "P05",
+      "operation": "embed_content",
+      "purpose": "RETRIEVAL_QUERY",
+      "model": "gemini-embedding-001",
+      "status": "success",
+      "usage": {},
+      "vector_count": 1,
+      "dimensions": [
+        3072
+      ],
+      "finite_vectors": true,
+      "billable_character_count": null,
+      "seconds": 0.404
+    },
+    {
+      "id": 22,
+      "phase": "P05",
+      "operation": "generate_content",
+      "purpose": "answer",
+      "model": "gemini-3.1-flash-lite",
+      "status": "success",
+      "usage": {
+        "prompt_token_count": 1215,
+        "candidates_token_count": 36,
+        "total_token_count": 1251
+      },
+      "model_version": "gemini-3.1-flash-lite",
+      "nonempty_text": true,
+      "seconds": 2.64
+    },
+    {
+      "id": 23,
+      "phase": "P06",
+      "operation": "embed_content",
+      "purpose": "RETRIEVAL_QUERY",
+      "model": "gemini-embedding-001",
+      "status": "success",
+      "usage": {},
+      "vector_count": 1,
+      "dimensions": [
+        3072
+      ],
+      "finite_vectors": true,
+      "billable_character_count": null,
+      "seconds": 0.404
+    },
+    {
+      "id": 24,
+      "phase": "P06",
+      "operation": "generate_content",
+      "purpose": "answer",
+      "model": "gemini-3.1-flash-lite",
+      "status": "success",
+      "usage": {
+        "prompt_token_count": 568,
+        "candidates_token_count": 59,
+        "total_token_count": 627
+      },
+      "model_version": "gemini-3.1-flash-lite",
+      "nonempty_text": true,
+      "seconds": 1.351
     }
   ],
   "limitations": [

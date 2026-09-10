@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-09-10T02:50:34.961002+00:00",
+  "checked_at_utc": "2026-09-10T03:01:03.215579+00:00",
   "platform": "Windows",
   "python": "3.12.14",
   "unit_tests": {
@@ -31,7 +31,7 @@
     "scripts/extract_texts.py": "6ec3454233c754fd3b00ea60767ddb39145d0035c870207cd83f2369a61d453b",
     "scripts/record_validation.py": "f790a2595267550e754c39c0c3518c053a9524d85211bad2e18fc9838789b984",
     "scripts/stress_test_generated_queries.py": "adad307334ca088638188538c251b1b00ffc71e7f17f8ebe90164bc775a4d62b",
-    "scripts/validate_live_api.py": "89ecb1266adb6b94f89f5be62821aa6d31dd92d46d7f0c7657c9cd31f5fd2ac6",
+    "scripts/validate_live_api.py": "401a0b3e39bf7503c22611c1875b55a7f36492f0caa913f644080b75c1c64b76",
     "scripts/verify_release.py": "aa5416b073a71133c52dadc2df1d03a5a372fc24923f5c2940cf0c074b6e2ae2",
     "sugang_mate/__init__.py": "d8ff18c5fd3b576a84894dadfe17662d3b5ff6b35a423ee0cf9569e63f7b4e82",
     "sugang_mate/cache.py": "7f705e454aa970914597f061018cde3272991400b954ede0de80759967e8e474",
