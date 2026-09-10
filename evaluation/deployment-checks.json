@@ -68,5 +68,28 @@
     }
   ],
   "scope": "One public deployment smoke check through browser and HTTP; not a load test or availability guarantee.",
-  "privacy": "Only authored synthetic course questions were submitted to the hosted app."
+  "privacy": "Only authored synthetic course questions were submitted to the hosted app.",
+  "latest_runtime_recheck": {
+    "checked_at_utc": "2026-09-10T03:22:46.335562+00:00",
+    "commit": "fbbea80af571a75faf884c2cc1d3b0a0aca4d3ed",
+    "status": "live",
+    "build_and_start_seconds": 118,
+    "runtime_sha256": {
+      "app.py": "090a0eac9ec381cc9474e2a8f4cf9821976ddacd8436ee2ba541d6f5da2a191a",
+      "gradio_app.py": "1e6735118bc507ce33b172ae454496bc5aaa1db4de98202346f33dfed7b67541",
+      "run_public.py": "227c1c6a27897aae73dc718536f0a9b13a01d9b0756ec3d5d012ef2512645677",
+      "requirements-online.txt": "af9840668b330a48d3aa32878ca9e704260604f42cffdaed75a014baee017f90"
+    },
+    "checks": {
+      "comparison_answer_and_sources": true,
+      "clear_resets_chat_evidence_and_status": true,
+      "gemini_answer_after_restart": true,
+      "gemini_answer_not_cached": true,
+      "expected_source_DEMO101": true
+    },
+    "displayed_generation_case_total_seconds": 2.06,
+    "screenshot": "docs/assets/demo-online.png",
+    "screenshot_sha256": "b93add315982c672064753dcbd932deb3480f82dfe6b6bf2999063eb6902d8bf",
+    "note": "Application code is unchanged by the later commit that publishes this verification record and screenshot."
+  }
 }

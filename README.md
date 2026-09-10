@@ -19,7 +19,7 @@
 3. **이어 묻기** — “그중 전공필수는 뭐야?”: 방금 비교한 두 과목 안에서 DEMO201을 찾습니다.
 
 <p align="center">
-  <img src="docs/assets/demo-comparison.png" alt="가상 과목의 평가방식 비교와 근거 확인 화면" width="760">
+  <img src="docs/assets/demo-online.png" alt="공개 서버에서 실제 Gemini 답변과 강의계획서 근거를 확인하는 화면" width="760">
 </p>
 
 공개 데모는 직접 작성한 **가상 과목 6개와 실제 Gemini API**를 사용합니다. 아래의 로컬 데모는 API 키 없이 실행되며, 실제 대학의 개설 정보를 제공하지 않습니다.
