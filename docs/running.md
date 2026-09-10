@@ -1,5 +1,7 @@
 # 실행·재현·공개 안내
 
+[문서 모아보기](README.md) · [온라인 데모·Render 배포](deployment.md) · [실제 API 검증 기록](live-api-validation.md)
+
 ## 1. 공개 예시 실행
 
 Windows PowerShell:
@@ -28,7 +30,7 @@ $env:SUGANG_DATA_PATH="data/processed/syllabus_texts.jsonl"
 
 ## 3. 선택적 수집·Gemini/Chroma 실행
 
-아래 경로는 이번 공개본 정리에서 외부 호출로 재검증하지 않았다. 학교 사이트의 현재 접근 상태와 이용 가능한 API 모델에 영향을 받는다.
+실제 Gemini 요청의 검증 범위와 결과는 [실제 API 검증 기록](live-api-validation.md)에 정리한다. 가상 데이터의 온라인 실행에는 [공개 데모 실행기](deployment.md)를 사용한다. 아래는 실제 원문을 보유하거나 직접 수집할 때의 전체 의존성 설치·인덱스 생성 경로다. 학교 사이트 수집은 현재 접근 상태와 페이지 형식에 영향을 받는다.
 
 ~~~powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements-rag.txt

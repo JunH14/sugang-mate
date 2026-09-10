@@ -9,3 +9,10 @@
 | [University RAG Chatbot](https://github.com/TheWerbinator/university-chatbot/blob/main/README.md) | 설계 문서 연결, 실행 가능한 예시, 평가 명령 제공 | 설계 결정·시연·검증 절차를 README에서 바로 연결 |
 
 각 프로젝트의 구현과 발표 수치는 해당 작성자의 설명이다. 수강메이트의 결과는 [자체 평가 보고서](evaluation.md)와 저장된 집계를 기준으로 한다.
+
+## 배포 설정 참고
+
+- [Render Web Services](https://render.com/docs/web-services): Python 웹 서비스, 공개 저장소 URL, 수동 배포, 포트 설정
+- [Render Free Services](https://render.com/docs/free): 무료 서비스의 휴면·재시작·파일 보존·사용량 조건
+
+적용한 설정은 [배포 안내](deployment.md)에, 실제 모델 요청의 결과는 [API 검증 기록](live-api-validation.md)에 기록한다.

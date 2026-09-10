@@ -9,12 +9,12 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 ROOT_FILES = ["README.md", ".env.example", ".gitignore", ".gitattributes",
-              "requirements.txt", "requirements-lock.txt", "requirements-rag.txt",
-              "app.py", "gradio_app.py", "retrieval_core.py", "run_demo.py"]
+              "requirements.txt", "requirements-lock.txt", "requirements-rag.txt", "requirements-online.txt",
+              "app.py", "gradio_app.py", "retrieval_core.py", "run_demo.py", "run_public.py"]
 SCRIPT_FILES = ["collect_syllabi.py", "extract_texts.py", "build_vector_db.py",
                 "evaluate_rag.py", "stress_test_generated_queries.py", "analyze_data.py",
                 "audit_legacy_evaluation.py", "benchmark_retrieval.py",
-                "verify_release.py", "export_public.py", "record_validation.py"]
+                "verify_release.py", "export_public.py", "record_validation.py", "validate_live_api.py"]
 SECRET_PATTERNS = [
     re.compile(r"AIza[0-9A-Za-z_-]{30,}"),
     re.compile(r"gh[pousr]_[0-9A-Za-z]{25,}"),

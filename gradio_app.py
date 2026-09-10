@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import hmac
 import json
 import os
+import secrets
 import subprocess
 import sys
 import threading
@@ -12,6 +14,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from types import SimpleNamespace
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
@@ -20,11 +23,23 @@ os.environ.setdefault("GRADIO_ANALYTICS_ENABLED", "False")
 import gradio as gr
 
 import app as core
+from sugang_mate.public_limits import MeteredModels, PublicLimitError, PublicLimits
+from sugang_mate.public_http import normalize_history, RequestSizeLimit
+from starlette.middleware import Middleware
 
 
 DEPARTMENT = "공공정책대학 · 빅데이터사이언스학부"
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "").strip()
 UPDATE_LOCK = threading.Lock()
+PUBLIC_DEMO = os.environ.get("SUGANG_PUBLIC_DEMO") == "1"
+PUBLIC_LIMITS = PublicLimits() if PUBLIC_DEMO else None
+CLIENT_SALT = secrets.token_bytes(32)
+if PUBLIC_LIMITS is not None and core.RAG.gemini_client is not None:
+    original_client = core.RAG.gemini_client
+    core.RAG.gemini_client = SimpleNamespace(
+        models=MeteredModels(original_client.models, PUBLIC_LIMITS),
+        underlying_client=original_client,
+    )
 
 
 def is_sample_data() -> bool:
@@ -37,7 +52,7 @@ def dataset_label() -> str:
 
 def example_questions() -> list[str]:
     if is_sample_data():
-        return ["전공필수 과목을 알려줘", "DEMO201과 DEMO202의 평가방식을 비교해줘", "PBL 과목을 알려줘", "월요일 수업을 알려줘"]
+        return ["CSV 파일에서 결측치를 처리하려면 어떤 과목이 관련돼?", "DEMO201과 DEMO202의 평가방식을 비교해줘", "전공필수 과목을 알려줘", "월요일 수업을 알려줘"]
     return core.EXAMPLE_QUESTIONS
 
 
@@ -136,7 +151,8 @@ def timing_label(result: dict[str, Any]) -> str:
         return f"캐시 응답 · {total:.3f}초"
     search = float(timings.get("search_seconds", 0.0))
     generation = float(timings.get("generation_seconds", 0.0))
-    return f"검색 {search:.2f}초 + 생성 {generation:.2f}초 = 전체 {total:.2f}초"
+    context = float(timings.get("context_seconds", 0.0))
+    return f"전체 {total:.2f}초 · 문맥 {context:.2f}초 / 검색 {search:.2f}초 / 생성 {generation:.2f}초"
 
 
 def diagnostics_markdown(result: dict[str, Any]) -> str:
@@ -169,7 +185,7 @@ def diagnostics_markdown(result: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def chat(message: str, history: list[dict[str, Any]]) -> tuple[str, str, str]:
+def chat(message: str, history: list[dict[str, Any]], request: gr.Request = None) -> tuple[str, str, str]:
     question = (message or "").strip()
     if not question:
         return (
@@ -181,7 +197,16 @@ def chat(message: str, history: list[dict[str, Any]]) -> tuple[str, str, str]:
     if len(question) > 500:
         return "질문은 500자 이내로 입력해 주세요.", "### 근거 자료\n\n질문 길이를 줄인 뒤 다시 시도하세요.", "### 응답 상태\n\n입력 확인 필요"
     try:
+        if PUBLIC_LIMITS is not None:
+            client = getattr(request, "client", None)
+            address = getattr(client, "host", None) or "unknown"
+            client_key = hashlib.sha256(CLIENT_SALT + str(address).encode("utf-8")).hexdigest()
+            PUBLIC_LIMITS.check_chat(client_key)
+            # Bound caller-provided history before either local interpretation or API use.
+            history = normalize_history(history)
         result = core.RAG.answer(question, history)
+    except PublicLimitError as error:
+        return str(error), "### 근거 자료\n\n새 답변을 생성하지 않았습니다.", "### 응답 상태\n\n공개 데모 요청 제한"
     except Exception as error:
         print(f"Chat request failed: {type(error).__name__}", file=sys.stderr)
         return "답변을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.", "### 근거 자료\n\n이번 요청의 근거를 표시할 수 없습니다.", "### 응답 상태\n\n처리 실패"
@@ -205,6 +230,15 @@ def course_table_markdown() -> str:
 
 
 def status_html() -> str:
+    if PUBLIC_DEMO:
+        return """
+        <div class="status-strip">
+          <div><strong>6개</strong><span>가상 과목</span></div>
+          <div><strong>비교·후속 질문</strong><span>대화로 탐색</span></div>
+          <div><strong>강의계획서</strong><span>답변 근거 확인</span></div>
+          <div><strong>Gemini 연결</strong><span>본문 질문 AI 답변</span></div>
+        </div>
+        """
     mode = {
         "chroma_gemini": "Chroma + BM25 + MMR + Gemini",
         "keyword_gemini": "키워드 + Gemini",
@@ -274,6 +308,8 @@ def update_data(
     password: str,
     progress: gr.Progress = gr.Progress(track_tqdm=False),
 ) -> tuple[str, str, str]:
+    if PUBLIC_DEMO or is_sample_data():
+        return "공개 예시에서는 데이터 갱신을 제공하지 않습니다.", status_html(), course_table_markdown()
     if not ADMIN_PASSWORD:
         return (
             "관리자 갱신이 비활성화되어 있습니다. `.env` 또는 Space Secrets에 `ADMIN_PASSWORD`를 설정하세요.",
@@ -513,8 +549,10 @@ def build_demo() -> gr.Blocks:
             elem_id="project-header",
         )
         status_component = gr.HTML(status_html())
+        if PUBLIC_DEMO:
+            gr.Markdown("질문과 최근 대화 일부가 답변 생성을 위해 Google Gemini로 전송될 수 있습니다. 개인정보는 입력하지 마세요. 대화는 서버 파일에 저장하지 않습니다. 공개 데모는 요청이 많으면 잠시 제한됩니다.")
 
-        with gr.Row(elem_id="department-row"):
+        with gr.Row(elem_id="department-row", visible=not PUBLIC_DEMO):
             department = gr.Dropdown(
                 choices=["가상 데이터 · 데모" if is_sample_data() else DEPARTMENT],
                 value="가상 데이터 · 데모" if is_sample_data() else DEPARTMENT,
@@ -573,7 +611,7 @@ def build_demo() -> gr.Blocks:
             flagging_dir=str(PROJECT_DIR / "data" / "feedback"),
             save_history=False,
             api_name="chat",
-            concurrency_limit=3,
+            concurrency_limit=2 if PUBLIC_DEMO else 3,
             fill_width=True,
         )
 
@@ -623,6 +661,8 @@ def build_demo() -> gr.Blocks:
                 concurrency_limit=1,
             )
 
+    if PUBLIC_DEMO:
+        demo.queue(max_size=16, default_concurrency_limit=2)
     return demo
 
 
@@ -650,6 +690,7 @@ def main() -> None:
         theme=build_theme(),
         css=CSS,
         head=ENTER_TO_SUBMIT_HEAD,
+        app_kwargs={"middleware": [Middleware(RequestSizeLimit)]} if PUBLIC_DEMO else None,
     )
     print(f"Local URL: {local_url}", flush=True)
     if share_url:

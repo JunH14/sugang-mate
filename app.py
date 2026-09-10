@@ -298,7 +298,14 @@ def normalize_cache_key(question: str) -> str:
     return re.sub(r"[?!.,。！？]+$", "", normalized).strip()
 
 
+def api_error_status(error: Exception) -> int | None:
+    status = getattr(error, "code", None) or getattr(error, "status_code", None)
+    return int(status) if re.fullmatch(r"[1-5][0-9]{2}", str(status)) else None
+
+
 def is_transient_api_error(error: Exception) -> bool:
+    if api_error_status(error) in {408, 429, 500, 502, 503, 504}:
+        return True
     message = str(error).casefold()
     markers = (
         "429",
@@ -319,14 +326,29 @@ def is_transient_api_error(error: Exception) -> bool:
 
 
 def friendly_api_warning(error: Exception, stage: str = "generation") -> str:
+    from sugang_mate.public_limits import PublicLimitError
+    if isinstance(error, PublicLimitError):
+        return "공개 데모의 AI 사용 한도에 도달해 저장된 강의계획서 근거로 답변했습니다. 잠시 후 다시 이용해 주세요."
+    status = api_error_status(error)
     message = str(error).casefold()
-    if "429" in message or "resource_exhausted" in message or "quota" in message:
+    if status == 429 or "429" in message or "resource_exhausted" in message or "quota" in message:
         return "Gemini API 요청 한도에 도달해 저장된 강의계획서 근거로 답변했습니다. 잠시 후 다시 시도해 주세요."
-    if any(code in message for code in ("500", "502", "503", "504", "unavailable", "timeout")):
+    if status in {408, 500, 502, 503, 504} or any(code in message for code in ("500", "502", "503", "504", "unavailable", "timeout")):
         return "Gemini 서비스가 일시적으로 혼잡해 저장된 강의계획서 근거로 답변했습니다."
     if stage == "embedding":
         return "의미 검색을 사용할 수 없어 키워드 검색으로 전환했습니다."
     return "Gemini 응답을 만들지 못해 저장된 강의계획서 근거로 답변했습니다."
+
+
+def log_api_error(stage: str, error: Exception, attempt: int | None = None) -> None:
+    """Log a bounded diagnostic without request text, URLs, or credentials."""
+    status_label = api_error_status(error) or "unknown"
+    attempt_label = f" attempt={attempt}" if attempt is not None else ""
+    print(
+        f"Gemini {stage} failed: type={type(error).__name__} status={status_label}{attempt_label}",
+        file=sys.stderr,
+        flush=True,
+    )
 
 
 @dataclass
@@ -497,10 +519,21 @@ class SyllabusRag:
             return None
         try:
             from google import genai
+            from google.genai import types
 
-            return genai.Client(api_key=api_key)
+            timeout_seconds = float(os.environ.get("GEMINI_TIMEOUT_SECONDS", "20"))
+            if not math.isfinite(timeout_seconds) or timeout_seconds <= 0:
+                raise ValueError("GEMINI_TIMEOUT_SECONDS must be a positive finite number")
+            return genai.Client(
+                api_key=api_key,
+                http_options=types.HttpOptions(
+                    timeout=max(1, int(timeout_seconds * 1000)),
+                    # Application retries remain the single retry policy.
+                    retry_options=types.HttpRetryOptions(attempts=1),
+                ),
+            )
         except Exception as error:
-            print(f"Gemini generate failed: {error}", file=sys.stderr)
+            log_api_error("client initialization", error)
             return None
 
     def _load_chroma_collection(self) -> Any:
@@ -773,9 +806,15 @@ class SyllabusRag:
                         "resolved_question": resolved_question,
                     }
 
+        context_seconds = time.perf_counter() - contextual_started
         result = self._answer_question(resolved_question)
+        result = copy.deepcopy(result)
+        result["timings"] = {
+            **result.get("timings", {}),
+            "context_seconds": round(context_seconds, 3),
+            "total_seconds": round(time.perf_counter() - contextual_started, 3),
+        }
         if context_metadata is not None:
-            result = copy.deepcopy(result)
             result["context_resolved"] = context_metadata
         return result
 
@@ -843,7 +882,7 @@ JSON 한 개만 출력:
                 return question
             return rewritten
         except Exception as error:
-            print(f"Follow-up rewrite failed: {error}", file=sys.stderr)
+            log_api_error("follow-up rewrite", error)
             return question
 
     def _answer_question(self, question: str) -> dict[str, Any]:
@@ -1084,11 +1123,43 @@ JSON 한 개만 출력:
     def clear_cache(self) -> None:
         self.answer_cache.clear()
 
+    def _generation_context_matches(self, matches: list[Match]) -> list[Match]:
+        """Keep retrieved evidence and add bounded context from the same courses.
+
+        Narrow content questions can retrieve the right course but miss a short
+        objective section. With at most two courses, retain the top five matches,
+        then add at most four overview/objective sections from those courses.
+        This does not change retrieval ranking or introduce additional courses.
+        """
+        courses = list(dict.fromkeys(match.chunk.syllabus.course_key for match in matches))
+        if not courses or len(courses) > 2:
+            return matches[:5]
+        selected: list[Match] = []
+        seen: set[tuple[str, str, str]] = set()
+
+        def add(match: Match) -> None:
+            key = (match.chunk.syllabus.course_key, match.chunk.section,
+                   match.chunk.parent_text or match.chunk.text)
+            if key not in seen and len(selected) < 9:
+                seen.add(key)
+                selected.append(match)
+
+        for match in matches[:5]:
+            add(match)
+        for section in ("교과목개요", "학습목표"):
+            for course in courses:
+                candidate = next((chunk for chunk in self.chunks
+                                  if chunk.syllabus.course_key == course and chunk.section == section), None)
+                if candidate is not None:
+                    add(Match(chunk=candidate, score=0.0))
+        return selected
+
     def _answer_with_gemini(self, question: str, matches: list[Match]) -> dict[str, Any] | None:
         from google.genai import types
 
         self.request_state.generation_warning = ""
 
+        context_matches = self._generation_context_matches(matches)
         context = "\n\n".join(
             "\n".join(
                 [
@@ -1097,10 +1168,10 @@ JSON 한 개만 출력:
                     f"교수: {match.chunk.syllabus.professor}",
                     f"이수구분: {match.chunk.syllabus.completion_type or '미확인'}",
                     f"수업시간 및 강의실: {match.chunk.syllabus.schedule_summary or '미기재'}",
-                    match.chunk.parent_text or match.chunk.text,
+                    (match.chunk.parent_text or match.chunk.text)[:2200],
                 ]
             )
-            for index, match in enumerate(matches[:5], start=1)
+            for index, match in enumerate(context_matches, start=1)
         )
         prompt = f"""
 당신은 고려대학교 세종캠퍼스 빅데이터사이언스학부 학생을 위한 수강 도우미입니다.
@@ -1137,7 +1208,7 @@ JSON 한 개만 출력:
                         if text.strip():
                             result = {
                                 "answer": text.strip(),
-                                "sources": source_payload(matches),
+                                "sources": source_payload(context_matches, question=question),
                                 "mode": (
                                     "chroma_gemini"
                                     if getattr(self.request_state, "search_backend", "keyword")
@@ -1166,11 +1237,7 @@ JSON 한 개만 출력:
                         break
                     except Exception as error:
                         last_error = error
-                        print(
-                            f"Gemini generate failed: model={model} attempt={attempt + 1} error={error}",
-                            file=sys.stderr,
-                            flush=True,
-                        )
+                        log_api_error("generation", error, attempt=attempt + 1)
                         should_retry = (
                             is_transient_api_error(error)
                             and attempt + 1 < self.gemini_retry_attempts
@@ -1183,7 +1250,7 @@ JSON 한 개만 출력:
             if last_error is not None:
                 self.request_state.generation_warning = friendly_api_warning(last_error)
         except Exception as error:
-            print(f"Gemini generate failed: {error}", file=sys.stderr, flush=True)
+            log_api_error("generation", error)
             self.request_state.generation_warning = friendly_api_warning(error)
             return None
         return None
@@ -1268,7 +1335,7 @@ def expand_query_tokens(tokens: list[str]) -> list[str]:
                 break
     query = " ".join(expanded)
     for key, values in SYNONYMS.items():
-        if key.lower() in query or any(value.lower() in query for value in values):
+        if contains_any(query, {key, *values}):
             expanded.extend(tokenize(" ".join(values)))
     return list(dict.fromkeys(expanded))
 
@@ -1476,14 +1543,27 @@ TITLE_QUERY_NOISE = sorted(
 )
 
 
+def _contains_term(text: str, term: str) -> bool:
+    # Encoding/decoding describe a representation, not a programming activity.
+    # Keep Korean particles and compounds such as "코딩을" and "바이브코딩".
+    if term == "코딩":
+        return re.search(r"(?<![인디엔])코딩", text) is not None
+    if term == "coding":
+        return re.search(r"(?<![a-z])coding(?![a-z])", text) is not None
+    return term in text
+
+
 def contains_any(text: str, terms: set[str]) -> bool:
-    lowered = text.lower()
-    return any(term.lower() in lowered for term in terms)
+    lowered = text.casefold()
+    return any(_contains_term(lowered, term.casefold()) for term in terms)
 
 
 def contains_phrase(text: str, phrases: tuple[str, ...] | list[str]) -> bool:
     compact = re.sub(r"\s+", "", text).casefold()
-    return any(re.sub(r"\s+", "", phrase).casefold() in compact for phrase in phrases)
+    return any(
+        _contains_term(compact, re.sub(r"\s+", "", phrase).casefold())
+        for phrase in phrases
+    )
 
 
 def evidence_excerpt(text: str, match: re.Match[str], max_len: int = 240) -> str:
@@ -3796,7 +3876,7 @@ def best_snippet(question: str, text: str, max_len: int = 260) -> str:
     return best[:max_len] + ("..." if len(best) > max_len else "")
 
 
-def source_payload(matches: list[Match]) -> list[dict[str, Any]]:
+def source_payload(matches: list[Match], question: str | None = None) -> list[dict[str, Any]]:
     seen: set[str] = set()
     payload: list[dict[str, Any]] = []
     for match in matches:
@@ -3826,6 +3906,17 @@ def source_payload(matches: list[Match]) -> list[dict[str, Any]]:
                 "snippet": best_snippet("", match.chunk.text, 220),
             }
         )
+        if question is not None:
+            course_matches = [item for item in matches if item.chunk.syllabus.course_key == key]
+            sections = list(dict.fromkeys(item.chunk.section for item in course_matches))
+            headings = {"기본정보", "교과목개요", "학습목표", "평가방법", "수업운영",
+                        "교재및과제", "주별학습내용", "지원및윤리", "Course Description",
+                        "Course Objectives", "Study Objectives"}
+            lines = [line.strip() for item in course_matches
+                     for line in (item.chunk.parent_text or item.chunk.text)[:2200].splitlines()
+                     if line.strip() and line.strip() not in headings]
+            payload[-1]["snippet"] = best_snippet(question, "\n".join(lines), 220)
+            payload[-1]["sections"] = sections
     return payload
 
 

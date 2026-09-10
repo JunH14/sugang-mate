@@ -1,6 +1,6 @@
 # 평가 설계와 결과
 
-작성일: 2026-09-10. 기능 회귀, 저장된 과거 기록 감사, 신규 검색 진단을 분리한다. 어떤 결과도 독립적인 실제 사용자 정확도 또는 LLM 답변 전체 사실성의 100%를 뜻하지 않는다.
+작성일: 2026-09-10. 기능 회귀, 저장된 과거 기록 감사, 신규 검색 진단을 분리한다. 실제 모델 연결은 [API 검증 기록](live-api-validation.md)에서 별도로 다룬다. 어떤 결과도 독립적인 실제 사용자 정확도 또는 LLM 답변 전체 사실성의 100%를 뜻하지 않는다.
 
 ## 1. 현재 공개본 코드의 기능 회귀
 
@@ -73,16 +73,20 @@ python -m unittest discover -s tests -v
 python scripts/verify_release.py
 ~~~
 
-Windows / Python 3.12의 새 가상환경에서 자동 테스트 32개와 공개 시나리오 5개를 확인했다. GitHub Actions에서도 **Windows·Ubuntu × Python 3.11·3.12의 네 환경이 모두 통과**했다. [성공한 실행 기록](https://github.com/JunH14/sugang-mate/actions/runs/34426806501)과 [최신 검사 상태](https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml)를 제공한다. 로컬 결과와 공개 Python 파일의 해시는 [release-checks.json](../evaluation/release-checks.json)에 기록한다.
+초기 공개 시점에는 Windows / Python 3.12의 새 가상환경에서 자동 테스트 32개와 공개 시나리오 5개를 확인했고, **Windows·Ubuntu × Python 3.11·3.12의 네 환경이 모두 통과**했다. [당시 실행 기록](https://github.com/JunH14/sugang-mate/actions/runs/34426806501)을 보존한다. 추가 수정 이후의 테스트 수·결과·코드 해시는 [release-checks.json](../evaluation/release-checks.json), 원격 실행 결과는 [최신 GitHub 검사](https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml)를 기준으로 한다.
 
 첫 원격 실행에서 발견한 Python 3.11의 f-string 문법 차이와 Windows 짧은 경로 표기 차이를 수정한 뒤 통과했다. CI는 외부 모델 API를 호출하지 않는다.
 
-## 5. 미측정 항목
+## 5. 실제 API와 공개 실행
 
-- 실제 Gemini API·벡터 DB 재구축 후의 생성 품질 및 장애 대응
+실제 Gemini 연결의 요청 조건, 응답 상태, 근거 대조 결과는 [API 검증 기록](live-api-validation.md)에 정리한다. 이 확인은 오프라인 기능 회귀나 독립적인 생성 품질 평가와 구분한다. 공개 예시의 설치·배포·요청 제한 조건은 [배포 안내](deployment.md)에서 확인할 수 있다.
+
+## 6. 추가 검증 과제
+
+- 벡터 DB 재구축을 포함한 동일 조건의 생성 품질·장애 대응 비교
 - 동일 조건의 벡터 단독·하이브리드 검색 비교
 - 사람이 작성하고 개발 과정과 분리한 최종 평가 질문
 - 실제 사용자 유용성·만족도·시간 절감
 - 인터넷 배포의 부하·비용·운영 안정성
 
-자동 테스트에 통과한 코드와 위 항목의 검증 완료를 구분한다. 실제 사용성 검증은 [별도 절차](user-study.md)를 준비했다.
+자동 테스트·대표 API 요청·공개 접속 확인과 위 항목의 검증 완료를 구분한다. 실제 사용성 검증은 [별도 절차](user-study.md)를 준비했다.
