@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import html
+import inspect
 import hmac
 import json
 import os
@@ -25,6 +26,7 @@ import gradio as gr
 import app as core
 from sugang_mate.public_limits import MeteredModels, PublicLimitError, PublicLimits
 from sugang_mate.public_http import normalize_history, RequestSizeLimit
+from sugang_mate.chat_presentation import present_answer
 from starlette.middleware import Middleware
 
 
@@ -56,22 +58,6 @@ def example_questions() -> list[str]:
     if PUBLIC_DEMO:
         return ["BDSC205에서 SAS를 다룬다는 근거가 있어?", "수리통계학은 무슨 요일 몇 시에 수업해?", "전공필수 과목을 알려줘", "BDSC401의 강의계획서를 근거로 딥러닝이론의 특징을 설명해줘"]
     return core.EXAMPLE_QUESTIONS
-
-
-ENTER_TO_SUBMIT_HEAD = r"""
-<script>
-document.addEventListener('keydown', (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLElement) || !target.closest('#question-input')) return;
-  if (event.key !== 'Enter' || event.shiftKey || event.isComposing || event.keyCode === 229) return;
-  const submit = document.querySelector('#question-input [data-testid="submit-button"]');
-  if (!(submit instanceof HTMLButtonElement) || submit.disabled) return;
-  event.preventDefault();
-  event.stopPropagation();
-  submit.click();
-}, true);
-</script>
-"""
 
 
 def format_sources(sources: list[dict[str, Any]]) -> str:
@@ -187,34 +173,42 @@ def diagnostics_markdown(result: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def chat(message: str, history: list[dict[str, Any]], request: gr.Request = None) -> tuple[str, str, str]:
-    question = (message or "").strip()
+def answer_result(message: str, history: list[dict[str, Any]], request: gr.Request = None) -> dict[str, Any]:
+    """Shared request boundary for both the legacy API and the chat screen."""
+    question = message.strip() if isinstance(message, str) else ""
     if not question:
-        return (
-            "질문을 입력해 주세요.",
-            "### 근거 자료\n\n질문을 보내면 사용한 강의계획서가 여기에 표시됩니다.",
-            "### 응답 상태\n\n질문을 기다리고 있습니다.",
-        )
-
+        return {"answer": "질문을 입력해 주세요.", "sources": [], "mode": "input_error", "error": True}
     if len(question) > 500:
-        return "질문은 500자 이내로 입력해 주세요.", "### 근거 자료\n\n질문 길이를 줄인 뒤 다시 시도하세요.", "### 응답 상태\n\n입력 확인 필요"
+        return {"answer": "질문은 500자 이내로 입력해 주세요.", "sources": [], "mode": "input_error", "error": True}
     try:
         if PUBLIC_LIMITS is not None:
             client = getattr(request, "client", None)
             address = getattr(client, "host", None) or "unknown"
             client_key = hashlib.sha256(CLIENT_SALT + str(address).encode("utf-8")).hexdigest()
             PUBLIC_LIMITS.check_chat(client_key)
-            # Bound caller-provided history before either local interpretation or API use.
-            history = normalize_history(history)
-        result = core.RAG.answer(question, history)
+        # The JSON endpoint accepts raw input; bound it even in local demo mode.
+        return core.RAG.answer(question, normalize_history(history))
     except PublicLimitError as error:
-        return str(error), "### 근거 자료\n\n새 답변을 생성하지 않았습니다.", "### 응답 상태\n\n공개 데모 요청 제한"
+        return {"answer": str(error), "sources": [], "mode": "request_limit", "error": True}
     except Exception as error:
         print(f"Chat request failed: {type(error).__name__}", file=sys.stderr)
-        return "답변을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.", "### 근거 자료\n\n이번 요청의 근거를 표시할 수 없습니다.", "### 응답 상태\n\n처리 실패"
+        return {"answer": "답변을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.", "sources": [], "mode": "request_error", "error": True}
+
+
+def chat(message: str, history: list[dict[str, Any]], request: gr.Request = None) -> tuple[str, str, str]:
+    """Preserve the original /chat response contract for external checks."""
+    result = answer_result(message, history, request)
     answer = str(result.get("answer", "답변을 생성하지 못했습니다.")).strip()
     sources = result.get("sources", []) or []
     return answer, format_sources(sources), diagnostics_markdown(result)
+
+
+def respond(message: str, history: list[dict[str, str]], request: gr.Request = None) -> dict[str, Any]:
+    """Return one answer and its own citations for the conversation screen."""
+    result = answer_result(message, history, request)
+    view = present_answer(result)
+    view.update({"mode_label": mode_label(result), "timing_label": timing_label(result), "error": bool(result.get("error"))})
+    return view
 
 
 def course_table_markdown() -> str:
@@ -381,301 +375,82 @@ def update_data(
 
 
 CSS = """
-:root {
-  --ku-crimson: #8b0029;
-  --ku-crimson-dark: #65001e;
-  --ink: #202124;
-  --muted: #66635f;
-  --line: #d9d5cf;
-  --paper: #faf9f6;
-}
-.gradio-container {
-  width: min(96vw, 1540px) !important;
-  max-width: 1540px !important;
-  min-width: 0 !important;
-  margin: 0 auto !important;
-  color: var(--ink);
-}
-#project-header {
-  border-bottom: 1px solid var(--line);
-  padding: 10px 2px 18px;
-  margin-bottom: 12px;
-}
-#project-header h1 {
-  font-size: 30px;
-  line-height: 1.2;
-  margin: 0 0 8px;
-  letter-spacing: 0;
-}
-#project-header p {
-  margin: 0;
-  color: var(--muted);
-}
-.status-strip {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: white;
-  overflow: hidden;
-  margin: 8px 0 16px;
-}
-.status-strip > div {
-  padding: 13px 15px;
-  border-right: 1px solid var(--line);
-  min-width: 0;
-}
-.status-strip > div:last-child { border-right: 0; }
-.status-strip strong {
-  display: block;
-  color: var(--ku-crimson);
-  font-size: 17px;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
-}
-.status-strip span {
-  display: block;
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 3px;
-}
-#department-row {
-  align-items: end;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 12px;
-  margin-bottom: 8px;
-}
-#chatbot {
-  width: 100% !important;
-  height: 420px !important;
-  min-height: 420px !important;
-  max-height: 420px !important;
-  border-radius: 6px;
-  overflow: hidden;
-}
-.message-wrap .message {
-  border-radius: 6px !important;
-  max-width: min(86%, 1040px) !important;
-  overflow-wrap: anywhere;
-}
-#question-input {
-  width: 100% !important;
-  min-height: 54px !important;
-}
-#question-input .input-container {
-  min-height: 54px !important;
-}
-#evidence-row {
-  align-items: stretch;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  margin: 14px 0 8px;
-  padding: 4px 0;
-}
-#source-panel,
-#diagnostics-panel {
-  padding: 10px 14px;
-  min-height: 170px;
-}
-#source-panel {
-  border-right: 1px solid var(--line);
-}
-#source-panel h3,
-#diagnostics-panel h3 {
-  color: var(--ku-crimson);
-  font-size: 16px;
-  margin-top: 0;
-}
-#source-panel h4 {
-  font-size: 14px;
-  margin: 14px 0 5px;
-}
-#source-panel blockquote,
-#diagnostics-panel blockquote {
-  border-left-color: var(--ku-crimson);
-  color: var(--muted);
-  font-size: 13px;
-}
-#admin-update {
-  border-top: 1px solid var(--line);
-  padding-top: 8px;
-}
-.examples button.example {
-  background: #202b3b !important;
-  border-color: #3b4758 !important;
-  color: white !important;
-}
-.examples button.example * {
-  color: white !important;
-}
-.examples button.example:hover {
-  background: #2a3749 !important;
-  border-color: var(--ku-crimson) !important;
-}
-button.primary {
-  background: var(--ku-crimson) !important;
-  border-color: var(--ku-crimson) !important;
-}
-button.primary:hover { background: var(--ku-crimson-dark) !important; }
-footer { display: none !important; }
-@media (max-width: 720px) {
-  .gradio-container { padding: 10px !important; }
-  .status-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .status-strip > div:nth-child(2) { border-right: 0; }
-  .status-strip > div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
-  #project-header h1 { font-size: 24px; }
-  #chatbot {
-    height: 400px !important;
-    min-height: 400px !important;
-    max-height: 400px !important;
-  }
-  .message-wrap .message { max-width: 94% !important; }
-  #evidence-row { display: block; }
-  #source-panel { border-right: 0; border-bottom: 1px solid var(--line); }
-}
+html, body { margin: 0 !important; overflow: hidden !important; background: #fff !important; }
+.gradio-container { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
+.gradio-container > .main, .gradio-container .wrap { padding: 0 !important; gap: 0 !important; }
+.gradio-container > .main { max-width: none !important; margin: 0 !important; width: 100% !important; }
+#sugang-shell { margin: 0 !important; padding: 0 !important; border: 0 !important; width: 100% !important; }
+#sugang-shell .html-container { padding: 0 !important; }
+#admin-update { position: fixed; bottom: 80px; right: 24px; z-index: 50; max-width: 560px; max-height: 70vh; overflow: auto; }
+footer, .built-with { display: none !important; }
 """
 
 
 def build_theme() -> gr.Theme:
-    return gr.themes.Base(
-        primary_hue="red",
-        secondary_hue="gray",
-        neutral_hue="gray",
-        radius_size="sm",
-    )
+    return gr.themes.Base(primary_hue="red", secondary_hue="gray", neutral_hue="gray", radius_size="sm")
+
+
+def screen_boot() -> dict[str, Any]:
+    sample = is_sample_data()
+    catalog = [{field: str(getattr(course, field, "") or "") for field in (
+        "course_code", "class_no", "course_name", "professor", "completion_type", "schedule_summary",
+    )} for course in core.RAG.syllabi]
+    return {
+        "scope": f"가상 과목 {len(catalog)}개 · 실행 예시" if sample else f"2026-1 · {len(catalog)}개 과목",
+        "catalog": catalog,
+        "online": not core.offline_enabled(),
+        "sample": sample,
+        "examples": example_questions()[:3] if sample else [
+            "수리통계학은 언제 수업해?", "전공필수 과목을 알려줘", "BDSC205에서는 어떤 내용을 배워?",
+        ],
+        "data_notice": (
+            "직접 작성한 가상 과목을 사용하는 실행 예시입니다. 실제 수강신청 정보가 아닙니다."
+            if sample else
+            "프로젝트에서 직접 수집한 2026학년도 1학기 고려대학교 세종캠퍼스 빅데이터사이언스학부 강의계획서의 정제본을 사용합니다. 수집 당시 자료이며 실시간 수강신청 정보가 아닙니다. 일부 첨부 문서의 추출 품질과 미기재 항목에 한계가 있습니다."
+        ),
+    }
 
 
 def build_demo() -> gr.Blocks:
+    ui_dir = PROJECT_DIR / "ui"
     with gr.Blocks(title="수강메이트 · 근거를 확인하는 수강 상담") as demo:
-        gr.Markdown(
-            "# 수강메이트\n"
-            "강의계획서를 찾아보고, 과목을 비교하고, 답변의 근거를 확인하세요.\n\n"
-            + ("**실행 예시:** 직접 작성한 가상 과목을 사용합니다. 실제 수강신청 정보가 아닙니다." if is_sample_data() else "직접 수집한 2026학년도 1학기 고려대학교 세종캠퍼스 빅데이터사이언스학부 강의계획서 기반 · 최종 수강 정보는 학교 공지를 확인하세요."),
-            elem_id="project-header",
+        gr.HTML(
+            value=(ui_dir / "chat.html").read_text(encoding="utf-8"),
+            css_template=(ui_dir / "chat.css").read_text(encoding="utf-8"),
+            js_on_load=(ui_dir / "chat.js").read_text(encoding="utf-8"),
+            apply_default_css=False, elem_id="sugang-shell", boot=screen_boot(),
         )
-        status_component = gr.HTML(status_html())
-        if PUBLIC_DEMO:
-            gr.Markdown("질문과 최근 대화 일부가 답변 생성을 위해 Google Gemini로 전송될 수 있습니다. 개인정보는 입력하지 마세요. 대화는 서버 파일에 저장하지 않습니다. 공개 데모는 요청이 많으면 잠시 제한됩니다.")
-
-        with gr.Row(elem_id="department-row", visible=not PUBLIC_DEMO):
-            department = gr.Dropdown(
-                choices=["가상 데이터 · 데모" if is_sample_data() else DEPARTMENT],
-                value="가상 데이터 · 데모" if is_sample_data() else DEPARTMENT,
-                label="단과대학 · 학과",
-                interactive=False,
-                scale=2,
+        # Retain the public /chat wire contract and dataset identity for existing clients.
+        # The custom screen uses /respond; both are queued in the same concurrency group.
+        with gr.Column(visible=False):
+            status_component = gr.HTML(status_html())
+            chatbot = gr.Chatbot()
+            textbox = gr.Textbox()
+            source_panel = gr.Markdown()
+            diagnostics_panel = gr.Markdown()
+            gr.ChatInterface(
+                fn=chat, chatbot=chatbot, textbox=textbox,
+                additional_outputs=[source_panel, diagnostics_panel],
+                flagging_mode="never", save_history=False, api_name="chat",
+                concurrency_limit=2 if PUBLIC_DEMO else 3,
             )
-            gr.Textbox(
-                value=dataset_label(),
-                label="데이터 범위",
-                interactive=False,
-                scale=1,
-            )
+        gr.api(respond, api_name="respond", queue=True, concurrency_limit=2 if PUBLIC_DEMO else 3,
+               concurrency_id="sugang-chat", api_description="A bounded question and recent history; returns an answer with its own citations.")
 
-        chatbot = gr.Chatbot(
-            label="강의계획서 수강 상담",
-            elem_id="chatbot",
-            height=420,
-            layout="bubble",
-            placeholder="강의계획서 기반 질문을 입력하세요.",
-            buttons=["copy", "copy_all"],
-            feedback_options=["도움됨", "부정확함"],
-        )
-        textbox = gr.Textbox(
-            placeholder="예: 팀 프로젝트가 있는 과목을 알려줘",
-            lines=1,
-            max_lines=1,
-            max_length=500,
-            container=False,
-            elem_id="question-input",
-            submit_btn="질문 보내기",
-            stop_btn="응답 중지",
-        )
-
-        source_panel = gr.Markdown(
-            "### 근거 자료\n\n질문을 보내면 사용한 강의계획서가 여기에 표시됩니다.",
-            elem_id="source-panel",
-            render=False,
-        )
-        diagnostics_panel = gr.Markdown(
-            "### 응답 상태\n\n질문을 기다리고 있습니다.",
-            elem_id="diagnostics-panel",
-            render=False,
-        )
-
-        gr.ChatInterface(
-            fn=chat,
-            chatbot=chatbot,
-            textbox=textbox,
-            additional_outputs=[source_panel, diagnostics_panel],
-            examples=example_questions(),
-            run_examples_on_click=True,
-            cache_examples=False,
-            flagging_mode="never",
-            flagging_options=["도움됨", "부정확함", "출처 오류"],
-            flagging_dir=str(PROJECT_DIR / "data" / "feedback"),
-            save_history=False,
-            api_name="chat",
-            concurrency_limit=2 if PUBLIC_DEMO else 3,
-            fill_width=True,
-        )
-
-        with gr.Row(elem_id="evidence-row"):
-            with gr.Column(scale=2, min_width=420):
-                source_panel.render()
-            with gr.Column(scale=1, min_width=280):
-                diagnostics_panel.render()
-
-        chatbot.clear(
-            fn=lambda: (
-                "### 근거 자료\n\n질문을 보내면 사용한 강의계획서가 여기에 표시됩니다.",
-                "### 응답 상태\n\n질문을 기다리고 있습니다.",
-            ),
-            outputs=[source_panel, diagnostics_panel],
-            queue=False,
-            api_visibility="private",
-        )
-
-        with gr.Accordion("수집 과목 목록", open=False):
-            course_table_component = gr.Markdown(course_table_markdown())
-        with gr.Accordion("평가 범위와 실행 정보", open=False):
-            gr.Markdown(("이 화면은 가상 데이터의 기능 예시입니다. " if is_sample_data() else "이 화면은 프로젝트에서 수집한 실제 강의계획서의 정제본을 사용합니다. 수집 당시 자료이며 실시간 수강신청 정보가 아닙니다. 일부 첨부 문서의 추출 품질과 미기재 항목에 한계가 있습니다. ") + "데이터 품질·검색 진단·평가 결과는 [평가 보고서](https://github.com/JunH14/sugang-mate/blob/main/docs/evaluation.md)에 실행 조건과 함께 기록했습니다. 현재 화면의 응답 시간을 전체 서비스 성능으로 해석하지 않습니다.")
-            gr.Markdown(
-                f"- 문서: {dataset_label()} · {len(core.RAG.syllabi)}개\n"
-                "- 분할: 문서 구역 보존, `chunk_size=900`, `chunk_overlap=120`\n"
-                "- 검색: BM25 키워드 검색, 벡터 DB 준비 시 Chroma 결합\n"
-                "- Retriever: `top_k=7`\n"
-                f"- 실행 모드: `{core.RAG.rag_mode}` · 생성 모델 설정 `{core.GENERATIVE_MODEL}`\n"
-                f"- 성능: 동일 질문 최대 {core.RAG.answer_cache_max}개, {core.RAG.answer_cache_ttl_seconds // 60}분 TTL 캐시\n"
-                "- 환각 방지: 검색 문서만 사용하고 확인되지 않는 정보는 명시적으로 제외"
-            )
-        with gr.Accordion("관리자 데이터 갱신", open=False, elem_id="admin-update", visible=bool(ADMIN_PASSWORD) and not PUBLIC_DEMO and not core.offline_enabled() and not is_sample_data()):
-            gr.Markdown(latest_data_status())
-            admin_password = gr.Textbox(
-                label="관리자 비밀번호",
-                type="password",
-                placeholder="ADMIN_PASSWORD",
-            )
-            update_button = gr.Button(
-                "강의계획안 다시 수집하고 적용",
-                variant="primary",
-                interactive=bool(ADMIN_PASSWORD),
-            )
-            initial_update_status = (
-                "갱신 준비 완료"
-                if ADMIN_PASSWORD
-                else "비활성: `.env` 또는 Hugging Face Space Secrets에 `ADMIN_PASSWORD`를 설정하세요."
-            )
-            update_status = gr.Markdown(initial_update_status)
-            update_button.click(
-                fn=update_data,
-                inputs=[admin_password],
-                outputs=[update_status, status_component, course_table_component],
-                api_name="update_data",
-                api_visibility="private",
-                concurrency_limit=1,
-            )
-
+        if bool(ADMIN_PASSWORD) and not PUBLIC_DEMO and not core.offline_enabled() and not is_sample_data():
+            with gr.Accordion("관리자 데이터 갱신", open=False, elem_id="admin-update"):
+                admin_password = gr.Textbox(label="관리자 비밀번호", type="password")
+                update_button = gr.Button("강의계획안 다시 수집하고 적용")
+                update_status = gr.Markdown(latest_data_status())
+                course_table_component = gr.Markdown(course_table_markdown())
+                update_button.click(fn=update_data, inputs=[admin_password],
+                    outputs=[update_status, status_component, course_table_component],
+                    api_name="update_data", api_visibility="private", concurrency_limit=1)
+    for dependency in demo.fns.values():
+        if dependency.api_name in {"chat", "respond"} or (
+            dependency.fn is not None and inspect.unwrap(dependency.fn) in {chat, respond}
+        ):
+            dependency.concurrency_id = "sugang-chat"
     if PUBLIC_DEMO:
         demo.queue(max_size=16, default_concurrency_limit=2)
     return demo
@@ -704,7 +479,7 @@ def main() -> None:
         footer_links=[],
         theme=build_theme(),
         css=CSS,
-        head=ENTER_TO_SUBMIT_HEAD,
+        head='<meta name="theme-color" content="#8b0029">',
         app_kwargs={"middleware": [Middleware(RequestSizeLimit)]} if PUBLIC_DEMO else None,
         blocked_paths=[
             "/etc/secrets", str(core.RAG.data_path.resolve()),

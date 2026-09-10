@@ -50,6 +50,7 @@ def main():
         "unit_tests": {"passed": int(count.group(1)), "failed": 0},
         "public_verification": json.loads(verification.stdout.strip().splitlines()[-1]),
         "code_sha256": {p.relative_to(ROOT).as_posix(): sha(p) for p in sorted(code_paths)},
+        "frontend_sha256": {p.relative_to(ROOT).as_posix(): sha(p) for p in sorted((ROOT / "ui").glob("*")) if p.is_file()},
         "requirements_lock_sha256": sha(ROOT / "requirements-lock.txt"),
         "scope": "Local validation only; see GitHub Actions for remote CI results",
         "ci_workflow_url": "https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml",

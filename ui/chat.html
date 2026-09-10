@@ -1,0 +1,39 @@
+<div class="sm-app">
+  <aside class="sm-sidebar" aria-label="주 메뉴">
+    <div class="sm-brand">수강메이트<span class="sm-brand-dot"></span></div>
+    <span class="sm-scope"></span>
+    <button class="sm-new sm-outline" type="button"><span aria-hidden="true">＋</span> 새 대화</button>
+    <nav>
+      <button class="sm-catalog" type="button"><span aria-hidden="true">▤</span> 과목 목록</button>
+      <button class="sm-about" type="button"><span aria-hidden="true">ⓘ</span> 서비스 안내</button>
+    </nav>
+    <div class="sm-sidebar-foot"><span class="sm-foot-line"></span>수업의 선택을 돕는<br>작은 대화의 시작</div>
+  </aside>
+  <main class="sm-main">
+    <header class="sm-mobile-header"><button class="sm-menu" aria-label="메뉴 열기" type="button">☰</button><strong>수강메이트</strong><button class="sm-new" aria-label="새 대화" type="button">＋</button></header>
+    <div class="sm-topbar"><span class="sm-top-label">강의계획서 기반 수강 상담</span><span class="sm-scope"></span></div>
+    <div class="sm-scroll">
+      <section class="sm-welcome" aria-label="시작 안내">
+        <div class="sm-eyebrow">YOUR COURSE COMPANION</div>
+        <h1>수업 선택이 고민될 때,<br><span>수강메이트</span></h1>
+        <p>강의계획서를 바탕으로 함께 알아봐요.<br>궁금한 과목부터, 나에게 맞는 수업까지.</p>
+        <div class="sm-examples" aria-label="예시 질문"></div>
+        <div class="sm-welcome-note"><span aria-hidden="true">✓</span> 답변에 사용한 강의계획서를 함께 확인할 수 있어요.</div>
+      </section>
+      <div class="sm-messages" role="log" aria-label="수강 상담 대화" aria-live="polite" aria-relevant="additions"></div>
+    </div>
+    <div class="sm-composer-area">
+      <div class="sm-notice" role="status"></div>
+      <form class="sm-composer">
+        <label class="sm-sr-only" for="sm-question">궁금한 수업을 물어보세요</label>
+        <textarea id="sm-question" name="question" rows="1" maxlength="500" placeholder="궁금한 수업을 물어보세요"></textarea>
+        <button class="sm-send" type="submit" aria-label="질문 보내기" title="질문 보내기"><span aria-hidden="true">↑</span></button>
+      </form>
+      <div class="sm-composer-meta"><span class="sm-privacy"></span><button class="sm-about" type="button">이용 안내</button><span class="sm-count" aria-live="off"></span></div>
+    </div>
+  </main>
+  <dialog class="sm-dialog" aria-labelledby="sm-dialog-title">
+    <div class="sm-dialog-heading"><h2 id="sm-dialog-title"></h2><button class="sm-close" type="button" aria-label="닫기">×</button></div>
+    <div class="sm-dialog-body"></div>
+  </dialog>
+</div>

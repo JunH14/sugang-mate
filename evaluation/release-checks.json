@@ -1,9 +1,9 @@
 {
-  "checked_at_utc": "2026-09-10T04:25:49.278714+00:00",
+  "checked_at_utc": "2026-09-10T05:16:06.494065+00:00",
   "platform": "Windows",
   "python": "3.12.14",
   "unit_tests": {
-    "passed": 98,
+    "passed": 115,
     "failed": 0
   },
   "public_verification": {
@@ -11,13 +11,13 @@
     "dataset": "synthetic 6-course sample",
     "scenario_count": 5,
     "mode": "keyword_extract",
-    "python_sources_parsed": 34,
+    "python_sources_parsed": 37,
     "gradio_config": "built",
     "external_model_calls": 0
   },
   "code_sha256": {
     "app.py": "090a0eac9ec381cc9474e2a8f4cf9821976ddacd8436ee2ba541d6f5da2a191a",
-    "gradio_app.py": "18ac7874a62d3b4370e4645fae39ab38db7c3dfd991a0a13d1d06145e50b4b29",
+    "gradio_app.py": "39409594bb82410db3e5a035a6ee136af9142461c9afad700fc4c8d17b9528c6",
     "retrieval_core.py": "d5c15d3e01f90c4286f5543e7bb7268d0d74e3a949e66d2a81aaf34c2072827b",
     "run_demo.py": "5307ebd55692c3d95fd1ffeffca924fa332ed39d34dc58be3b288b4ea50ce5f4",
     "run_public.py": "e468b1235c6d3d850d4c0cc8985492e88424188900bf54c47d5f7ed1558a085e",
@@ -28,19 +28,22 @@
     "scripts/check_hosted_demo.py": "534bea8ada61792607a0de5e70e6f629d7d626b21a96b7d75254713e4c7a1d81",
     "scripts/collect_syllabi.py": "ebf709ca0084c3a99bee28220a2fb4594fc7dc65cea2060fabdcc0714add90b0",
     "scripts/evaluate_rag.py": "020e4ee13307b4e307005d64b1b30ae2a7a4915a02303c51683f1ffb016f7985",
-    "scripts/export_public.py": "ebeb802ab7a553e5497ee9ef4498d5635ca24578760d1682165f51f6b7cb6a22",
+    "scripts/export_public.py": "3c12fdb0bc8854d95ac6450b0da3c00cde9eaea1d692bebe4061db1838dd0fda",
     "scripts/extract_texts.py": "6ec3454233c754fd3b00ea60767ddb39145d0035c870207cd83f2369a61d453b",
     "scripts/prepare_hosted_data.py": "df0088722ba429179371b94e0fce0454021222d5664fe96b46cd67ee563d5a32",
-    "scripts/record_validation.py": "f790a2595267550e754c39c0c3518c053a9524d85211bad2e18fc9838789b984",
+    "scripts/record_validation.py": "00c99458b71ee2ae53e16c1b9ed6104c38c1e271f2e9fdb6e758d2dd86f02664",
     "scripts/stress_test_generated_queries.py": "adad307334ca088638188538c251b1b00ffc71e7f17f8ebe90164bc775a4d62b",
     "scripts/validate_live_api.py": "401a0b3e39bf7503c22611c1875b55a7f36492f0caa913f644080b75c1c64b76",
-    "scripts/verify_release.py": "aa5416b073a71133c52dadc2df1d03a5a372fc24923f5c2940cf0c074b6e2ae2",
+    "scripts/verify_release.py": "4d2be6a1df6f8563f1c1c26c2c0b9c0cbfd11d0317f1836ea91b5a1609c152d7",
     "sugang_mate/__init__.py": "d8ff18c5fd3b576a84894dadfe17662d3b5ff6b35a423ee0cf9569e63f7b4e82",
     "sugang_mate/cache.py": "7f705e454aa970914597f061018cde3272991400b954ede0de80759967e8e474",
+    "sugang_mate/chat_presentation.py": "13f42e14dbbe2e090816884be393b0dd50ab783e3b6dbf32959364ea368196df",
     "sugang_mate/config.py": "650026eba5e061f8bca2c8efe97e354474baa8ae3c951fef08f93a9e71053823",
     "sugang_mate/public_http.py": "ff1a4a72db3b1d56f42d777d4878450772643ff81d567dc2d63cdbeb2072354f",
     "sugang_mate/public_limits.py": "cce44d85c771cb0511db0f69b7d8a0bfd3167d5f709151651be57d365eeb7e3d",
     "tests/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "tests/test_chat_presentation.py": "7efd9313e217e8757108adc246f1930fea02b9d2359a96346a939bc7240848ad",
+    "tests/test_chat_ui.py": "449dcb8b24b7508246530780b98738d2ac8f37a24bdbf627e59b8133ead8789e",
     "tests/test_core.py": "1e29d6931bb350a0d7c29309894d6d091ea45b431042234ed5ba9ff0685e1745",
     "tests/test_demo.py": "3c528ba3b89b0d3ff3026c7d2b83d3bfa6baac8087a6a237076c6be365f20ad3",
     "tests/test_evaluation.py": "37667fa4325088ae30b6ac3575ec0366ea013653de08d2069630c0a8baad5890",
@@ -51,8 +54,14 @@
     "tests/test_public_http.py": "70c889964efebb3fd5c9813d673f141a31c3915c3130f66b4c9e94e836c7ba04",
     "tests/test_public_limits.py": "d4634b14d7da8c7c20dd24d4406d85eb3d68b7ee816e861cae3fcfe9a605c9ea"
   },
+  "frontend_sha256": {
+    "ui/chat.css": "5b285bac64a8ea8b8b1a2e86c01f0fb6235ac3f44eae2ac750740ee3ab6e12ca",
+    "ui/chat.html": "1e1f2b3f5c67df736fd16bd7f58bbea47b28dcbf51f3f5acff15aa2724dca3a0",
+    "ui/chat.js": "9e6c291e8ceabcb5223dcc88b75241f2bd87c868ef0bb73ad03ac02c8b626c3b"
+  },
   "requirements_lock_sha256": "54150a79e8128b603d0ca5ca3c86af43cff2f0e0ea17ea33fd45ebb9f893c08e",
   "scope": "Local validation only; see GitHub Actions for remote CI results",
   "ci_workflow_url": "https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml",
-  "external_model_test_executed": false
+  "external_model_test_executed": false,
+  "private_regression_passed": true
 }

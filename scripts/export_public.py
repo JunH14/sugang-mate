@@ -32,6 +32,7 @@ def public_files() -> list[Path]:
         ("sugang_mate", {".py"}), ("tests", {".py"}), ("docs", {".md", ".png", ".svg"}),
         ("evaluation", {".json"}), (".github/workflows", {".yml"}),
         ("data/sample", {".jsonl"}),
+        ("ui", {".html", ".css", ".js"}),
     ]:
         paths += [p for p in (ROOT / folder).rglob("*")
                   if p.is_file() and p.suffix in extensions and "__pycache__" not in p.parts]

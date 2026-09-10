@@ -1,0 +1,75 @@
+{
+  "checked_at_utc": "2026-09-10T05:18:55.944381+00:00",
+  "scope": "Browser interaction checks of the new chat screen; these are functional checks, not a user study.",
+  "local_browser": {
+    "data_mode": "collected",
+    "document_count": 25,
+    "dataset_sha256": "134c09d53cd3588555538459ee470fe9d540fcfe75b37c24d09c960929769b9f",
+    "desktop_viewports": [
+      [
+        1440,
+        900
+      ],
+      [
+        1280,
+        720
+      ]
+    ],
+    "mobile_viewport": [
+      390,
+      844
+    ],
+    "checks": {
+      "desktop_layout_no_horizontal_overflow": true,
+      "mobile_layout_no_horizontal_overflow": true,
+      "composer_visible_at_bottom": true,
+      "multiline_input_grows": true,
+      "course_card_and_official_source_link": true,
+      "earlier_answer_citations_retained": true,
+      "comparison_then_followup": true,
+      "earlier_answer_followup_uses_its_own_history": true,
+      "course_catalog_search_and_selection": true,
+      "mobile_menu_and_privacy_notice": true,
+      "new_conversation_clears_history_and_citations": true,
+      "stop_restores_send_button": true,
+      "late_response_does_not_restore_cleared_conversation": true
+    },
+    "model_call_note": "A local model request encountered a ConnectError in the restricted environment; the grounded fallback and its notice rendered correctly. Hosted model verification is recorded separately."
+  },
+  "automated_checks": {
+    "unit_tests_passed": 115,
+    "unit_tests_failed": 0,
+    "private_original_regression_passed": 103,
+    "private_original_regression_total": 103,
+    "javascript_syntax": "node --check ui/chat.js passed",
+    "legacy_chat_api_contract": "preserved",
+    "json_endpoint": "/gradio_api/call/respond",
+    "shared_request_and_concurrency_limits": true
+  },
+  "screenshots": {
+    "docs/assets/demo-collected.png": {
+      "size": [
+        1280,
+        720
+      ],
+      "sha256": "d8c01f23a0326b9f60ce74e8dfc8f9933f1868d64702fc8847c949132c8c3329",
+      "content": "Actual first screen; no course excerpts or chat answers"
+    },
+    "docs/assets/demo-mobile.png": {
+      "size": [
+        390,
+        844
+      ],
+      "sha256": "0194091279004faa4561216d72631f8486c0f106f6a0ec8eb445223ac8c556b8",
+      "content": "Actual first screen; no course excerpts or chat answers"
+    }
+  },
+  "frontend_sha256": {
+    "ui/chat.css": "5b285bac64a8ea8b8b1a2e86c01f0fb6235ac3f44eae2ac750740ee3ab6e12ca",
+    "ui/chat.html": "1e1f2b3f5c67df736fd16bd7f58bbea47b28dcbf51f3f5acff15aa2724dca3a0",
+    "ui/chat.js": "9e6c291e8ceabcb5223dcc88b75241f2bd87c868ef0bb73ad03ac02c8b626c3b"
+  },
+  "hosted": {
+    "status": "pending deployment verification"
+  }
+}

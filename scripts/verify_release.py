@@ -20,7 +20,8 @@ def main() -> int:
                 "requirements-lock.txt", "gradio_app.py", "app.py", "retrieval_core.py",
                 "docs/portfolio.md", "docs/evaluation.md", "docs/data-quality.md",
                 "data/sample/syllabus_texts.jsonl", ".github/workflows/checks.yml", "run_demo.py",
-                "docs/assets/demo-comparison.png"]
+                "docs/assets/demo-comparison.png", "docs/assets/demo-collected.png",
+                "docs/assets/demo-mobile.png", "ui/chat.html", "ui/chat.css", "ui/chat.js"]
     for filename in required:
         path = ROOT / filename
         if not path.is_file() or path.stat().st_size == 0:
