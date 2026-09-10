@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "scope": "Stored 2026-1R course snapshot audit; no live collection, OCR accuracy measurement, user study, or LLM calls.",
+  "input_sha256": {
+    "data/processed/courses.csv": "651b1e90b2c837f0648e9cb326ccc53800108849a4d75123e335f72322bbd923",
+    "data/processed/courses_deduplicated.csv": "834e4580345e28ceb7379f6a2cb6ffdb178c0748f7b0fa7ca40da3b071aa6ce9",
+    "data/processed/syllabus_texts.jsonl": "6584e2b8bb13fd9147c035fa9c9510475412c9e26f7ddabcfb12f0da285ed6f1",
+    "data/processed/text_extraction_report.csv": "caf404171519f67c8211560835be67d96828e5c33cf49a0bbb21b4a012a7ca9e",
+    "data/processed/duplicate_report.csv": "4050c7b916fd25bd3a2781a8cdef498b7e998db2a2b8f73079eb751b183126cd",
+    "data/processed/dedup_manifest.json": "5d204fd36f9082730925e961f9f2b70ded5210a7330e71d1ed7760b110dccc30"
+  },
+  "snapshot": {
+    "year_terms": [
+      "2026-1R"
+    ],
+    "collection_records": 26,
+    "unique_course_codes": 25,
+    "canonical_records": 25,
+    "processed_documents": 25,
+    "nonempty_documents": 25,
+    "referenced_html_records_present": 26,
+    "raw_html_files_on_disk": 36,
+    "raw_html_files_not_referenced_by_current_csv": 10,
+    "collection_status_counts": {
+      "html_attachment_saved": 18,
+      "html_saved": 8
+    },
+    "source_combination_counts": {
+      "docx;html": 2,
+      "html": 8,
+      "hwp;html": 10,
+      "pdf;html": 5
+    }
+  },
+  "formats": [
+    {
+      "format": "pdf",
+      "collected_records": 6,
+      "nonempty_attachment_files": 6,
+      "canonical_records": 5,
+      "documents_recording_format": 5,
+      "warning": "Recorded source presence is not character or table extraction accuracy."
+    },
+    {
+      "format": "hwp",
+      "collected_records": 10,
+      "nonempty_attachment_files": 10,
+      "canonical_records": 10,
+      "documents_recording_format": 10,
+      "warning": "Recorded source presence is not character or table extraction accuracy."
+    },
+    {
+      "format": "docx",
+      "collected_records": 2,
+      "nonempty_attachment_files": 2,
+      "canonical_records": 2,
+      "documents_recording_format": 2,
+      "warning": "Recorded source presence is not character or table extraction accuracy."
+    }
+  ],
+  "metadata_missingness": {
+    "denominator": 25,
+    "fields": {
+      "course_code": {
+        "missing": 0,
+        "missing_pct": 0.0
+      },
+      "class_no": {
+        "missing": 0,
+        "missing_pct": 0.0
+      },
+      "course_name": {
+        "missing": 0,
+        "missing_pct": 0.0
+      },
+      "professor": {
+        "missing": 0,
+        "missing_pct": 0.0
+      },
+      "completion_type": {
+        "missing": 0,
+        "missing_pct": 0.0
+      },
+      "credit": {
+        "missing": 0,
+        "missing_pct": 0.0
+      },
+      "class_hours": {
+        "missing": 0,
+        "missing_pct": 0.0
+      },
+      "schedule_summary": {
+        "missing": 6,
+        "missing_pct": 24.0
+      },
+      "syllabus_url": {
+        "missing": 0,
+        "missing_pct": 0.0
+      }
+    },
+    "no_schedule_course_codes": [
+      "BDSC121",
+      "BDSC122",
+      "BDSC123",
+      "BDSC441",
+      "BDSC442",
+      "BDSC443"
+    ],
+    "interpretation": "A missing timetable for project/internship courses is unknown, not zero class time and not proof of a collection failure."
+  },
+  "text_consistency": {
+    "char_count_total": 122085,
+    "char_count_min": 1795,
+    "char_count_median": 4138,
+    "char_count_max": 8835,
+    "jsonl_vs_text_file_mismatch_codes": [],
+    "char_count_or_extraction_report_mismatch_codes": []
+  },
+  "deduplication": {
+    "stored_manifest": {
+      "similarity_method": "difflib.SequenceMatcher",
+      "same_name_only": true,
+      "threshold": 0.9,
+      "input_course_count": 26,
+      "output_course_count": 25,
+      "removed_duplicate_count": 1
+    },
+    "preservation_checks": [
+      {
+        "course_code": "BDSC155",
+        "canonical_class": "01",
+        "removed_text_class": "02",
+        "similarity": 0.995658,
+        "source_schedule_entries": 3,
+        "canonical_csv_schedule_entries": 3,
+        "document_schedule_entries": 3,
+        "source_schedules_preserved_in_csv": true,
+        "source_schedules_preserved_in_document": true,
+        "document_schedule_classes": [
+          "01",
+          "02"
+        ]
+      }
+    ]
+  },
+  "quality_signals": {
+    "html_only_documents": 8,
+    "html_missing_evaluation_marker_documents": 16,
+    "missing_evaluation_marker_with_attachment_documents": 9,
+    "missing_evaluation_marker_html_only_codes": [
+      "BDSC121",
+      "BDSC122",
+      "BDSC123",
+      "BDSC303",
+      "BDSC441",
+      "BDSC442",
+      "BDSC443"
+    ],
+    "known_hwp_artifact_marker_documents": 10,
+    "artifact_marker_codes": [
+      "BDSC203",
+      "BDSC205",
+      "BDSC309",
+      "BDSC317",
+      "BDSC319",
+      "BDSC325",
+      "BDSC327",
+      "BDSC331",
+      "BDSC401",
+      "BDSC407"
+    ],
+    "alternative_heading_documents": 4,
+    "alternative_heading_codes": [
+      "BDSC317",
+      "BDSC319",
+      "BDSC325",
+      "BDSC327"
+    ],
+    "checklist_label_duplicate_documents": 25,
+    "interpretation": "Signals flag documents for review; they do not prove every field is missing or quantify extraction accuracy. HTML form labels include unselected choices."
+  }
+}

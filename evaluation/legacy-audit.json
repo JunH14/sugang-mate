@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "scope": "Audit of saved legacy response records; no evaluation rerun or API calls",
+  "audit_script_sha256": "d43c3f37fe7f384a8a6dfad1cfd73c8b77d98d1f331bd7b75cdb4ab33eb9972d",
+  "interpretation": [
+    "Model response counts are recorded result rows, not actual API request counts; cached results may retain a model name.",
+    "Empty expected_terms automatically satisfy that one string-membership check; other assertions still apply.",
+    "Legacy pass rate does not measure full answer factuality, independent generalization, or production reliability."
+  ],
+  "runs": {
+    "gemini_chroma_baseline_300": {
+      "input_sha256": "f015fe73ff1f6ca944759cd73a42e01bdcb59c2883b61cf97ce74f3833bef61e",
+      "case_count": 300,
+      "passed_count": 273,
+      "failed_count": 27,
+      "pass_rate": 0.91,
+      "unique_question_count": 300,
+      "equivalence_group_count": 207,
+      "mode_counts": {
+        "chroma_gemini": 94,
+        "extractive": 7,
+        "structured_catalog": 8,
+        "structured_learning": 29,
+        "structured_schedule": 142,
+        "structured_title": 20
+      },
+      "recorded_model_response_counts": {
+        "gemini-3.1-flash-lite": 92,
+        "gemini-3.5-flash": 2
+      },
+      "recorded_model_response_count": 94,
+      "nonempty_expected_terms_count": 64,
+      "empty_expected_terms_count": 236,
+      "nonempty_allowed_modes_count": 64,
+      "require_no_sources_count": 1,
+      "ordered_questions_sha256": "3409376c44b3638b9cbaf4fc853aa59a22cab51e9ab52e861f4f72dbfe682a2c",
+      "ordered_expected_codes_sha256": "450438c0e97a8d7976b750cdb17342fa4ea09c2af177938ab0d4a782b0c40018",
+      "summary_count_matches_rows": true,
+      "summary_passed_matches_rows": true,
+      "declared_run_mode": "chroma_gemini"
+    },
+    "gemini_chroma_improved_300": {
+      "input_sha256": "d5afb95f8e80e2f80b765660e83a21f12c74ccf707115ddcfc35c01fa72791bf",
+      "case_count": 300,
+      "passed_count": 300,
+      "failed_count": 0,
+      "pass_rate": 1.0,
+      "unique_question_count": 300,
+      "equivalence_group_count": 207,
+      "mode_counts": {
+        "chroma_gemini": 6,
+        "out_of_scope": 1,
+        "structured_catalog": 14,
+        "structured_course_assessment": 38,
+        "structured_course_metadata": 64,
+        "structured_learning": 29,
+        "structured_numeric": 2,
+        "structured_schedule": 142,
+        "structured_title": 4
+      },
+      "recorded_model_response_counts": {
+        "gemini-3.1-flash-lite": 6
+      },
+      "recorded_model_response_count": 6,
+      "nonempty_expected_terms_count": 64,
+      "empty_expected_terms_count": 236,
+      "nonempty_allowed_modes_count": 64,
+      "require_no_sources_count": 1,
+      "ordered_questions_sha256": "3409376c44b3638b9cbaf4fc853aa59a22cab51e9ab52e861f4f72dbfe682a2c",
+      "ordered_expected_codes_sha256": "450438c0e97a8d7976b750cdb17342fa4ea09c2af177938ab0d4a782b0c40018",
+      "summary_count_matches_rows": true,
+      "summary_passed_matches_rows": true,
+      "declared_run_mode": "chroma_gemini"
+    },
+    "gemini_chroma_improved_2500": {
+      "input_sha256": "3ded76373417e7903827084c6ef2efe8919527b4b526ad01d54e10e3ea3200c6",
+      "case_count": 2500,
+      "passed_count": 2500,
+      "failed_count": 0,
+      "pass_rate": 1.0,
+      "unique_question_count": 2199,
+      "equivalence_group_count": 367,
+      "mode_counts": {
+        "chroma_gemini": 43,
+        "extractive": 11,
+        "fallback": 3,
+        "out_of_scope": 16,
+        "structured_catalog": 141,
+        "structured_course_assessment": 224,
+        "structured_course_metadata": 626,
+        "structured_learning": 199,
+        "structured_numeric": 15,
+        "structured_schedule": 1145,
+        "structured_title": 77
+      },
+      "recorded_model_response_counts": {
+        "gemini-3.1-flash-lite": 42,
+        "gemini-3.5-flash": 1
+      },
+      "recorded_model_response_count": 43,
+      "nonempty_expected_terms_count": 634,
+      "empty_expected_terms_count": 1866,
+      "nonempty_allowed_modes_count": 407,
+      "require_no_sources_count": 19,
+      "ordered_questions_sha256": "a8b044dccdb49f477bcc3751579d39485e61ce039cc183b4b614ef0a22c321bf",
+      "ordered_expected_codes_sha256": "e7ce7c83e8d3273687014442f3a82dd5badeffddaa7a8f1f449acb77986aad0c",
+      "summary_count_matches_rows": true,
+      "summary_passed_matches_rows": true,
+      "declared_run_mode": "chroma_gemini"
+    }
+  },
+  "comparison_300": {
+    "ordered_questions_identical": true,
+    "ordered_expected_codes_identical": true,
+    "ordered_scoring_labels_identical": true
+  }
+}

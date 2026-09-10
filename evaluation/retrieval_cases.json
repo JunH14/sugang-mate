@@ -1,0 +1,788 @@
+{
+  "schema_version": 1,
+  "label_provenance": "agent-authored diagnostic, NOT human blind holdout",
+  "label_method": "Questions and short evidence snippets authored after inspection of stored source text, before retrieval results. Labels were not derived from generated answers. Sections are existing parser output labels, not human-validated semantic section boundaries.",
+  "scope": "30 answerable diagnostic queries over 15 courses in the 2026-1R snapshot. Each query identifies one source-supported target; relevance labels are not exhaustive across all possible courses. No claim of real-user accuracy or unseen-query generalization.",
+  "cases": [
+    {
+      "id": "R01",
+      "question": "데이터사이언스를위한수학에서는 미적분을 어느 범위까지 배우나요?",
+      "expected_codes": [
+        "BDSC155"
+      ],
+      "expected_sections": [
+        "교과목개요"
+      ],
+      "evidence_quote": "일변수 및 다변수 함수의 미분과 적분의 개념을 숙지하여",
+      "category": "named_course_content",
+      "source_file": "data/processed/text/BDSC155_01_데이터사이언스를위한수학.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC155",
+          "evidence": [
+            {
+              "section": "교과목개요",
+              "snippets": [
+                "일변수 및 다변수 함수의 미분과 적분의 개념을 숙지하여"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R02",
+      "question": "데이터사이언스를위한수학의 참여도 점수에는 발표도 포함되나요?",
+      "expected_codes": [
+        "BDSC155"
+      ],
+      "expected_sections": [
+        "평가방법"
+      ],
+      "evidence_quote": "발표 점수를 부여하여 출석 점수와 합하여 참여도 점수로 한다.",
+      "category": "named_course_assessment",
+      "source_file": "data/processed/text/BDSC155_01_데이터사이언스를위한수학.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC155",
+          "evidence": [
+            {
+              "section": "평가방법",
+              "snippets": [
+                "발표 점수를 부여하여 출석 점수와 합하여 참여도 점수로 한다."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R03",
+      "question": "수리통계학을 듣기 전에 권장되는 수업은 무엇인가요?",
+      "expected_codes": [
+        "BDSC201"
+      ],
+      "expected_sections": [
+        "교과목개요"
+      ],
+      "evidence_quote": "추천 선수과목 및 수강요건통계학 입문",
+      "category": "named_course_prerequisite",
+      "source_file": "data/processed/text/BDSC201_00_수리통계학.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC201",
+          "evidence": [
+            {
+              "section": "교과목개요",
+              "snippets": [
+                "추천 선수과목 및 수강요건통계학 입문"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R04",
+      "question": "수리통계학에서 최대 가능도 추정법을 배우는지 확인하고 싶어요.",
+      "expected_codes": [
+        "BDSC201"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "적률추정법, 최대 가능도 추정법",
+      "category": "named_course_content",
+      "source_file": "data/processed/text/BDSC201_00_수리통계학.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC201",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "적률추정법, 최대 가능도 추정법"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R05",
+      "question": "탐색적 자료분석과 통계 추론을 R 또는 Python으로 배우는 방법론 강의가 있나요?",
+      "expected_codes": [
+        "BDSC203"
+      ],
+      "expected_sections": [
+        "교과목개요"
+      ],
+      "evidence_quote": "R또는 Python을 이용한 분석 기법을 소개한다.",
+      "category": "topic_discovery",
+      "source_file": "data/processed/text/BDSC203_00_데이터사이언스방법론.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC203",
+          "evidence": [
+            {
+              "section": "교과목개요",
+              "snippets": [
+                "R또는 Python을 이용한 분석 기법을 소개한다."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R06",
+      "question": "데이터사이언스방법론은 수업 전에 영상을 봐야 하나요?",
+      "expected_codes": [
+        "BDSC203"
+      ],
+      "expected_sections": [
+        "평가방법"
+      ],
+      "evidence_quote": "매 주 수강생들은 사전수업으로 동영상을 시청하고",
+      "category": "named_course_operation",
+      "source_file": "data/processed/text/BDSC203_00_데이터사이언스방법론.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC203",
+          "evidence": [
+            {
+              "section": "평가방법",
+              "snippets": [
+                "매 주 수강생들은 사전수업으로 동영상을 시청하고"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R07",
+      "question": "최소 신장 트리와 최단 경로를 다루는 알고리즘 수업을 찾고 있어요.",
+      "expected_codes": [
+        "BDSC211"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "Minimum Spanning Tree, Shortest Paths,",
+      "category": "cross_language_discovery",
+      "source_file": "data/processed/text/BDSC211_00_빅데이터알고리즘_영강.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC211",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "Minimum Spanning Tree, Shortest Paths,"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R08",
+      "question": "빅데이터알고리즘에서 계산 불가능성과 P 대 NP 문제도 다루나요?",
+      "expected_codes": [
+        "BDSC211"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "Turing Machines, Undecidability, P vs. NP",
+      "category": "cross_language_named",
+      "source_file": "data/processed/text/BDSC211_00_빅데이터알고리즘_영강.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC211",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "Turing Machines, Undecidability, P vs. NP"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R09",
+      "question": "미분방정식을 신경망으로 푸는 PINN 구현을 해보는 과목이 있나요?",
+      "expected_codes": [
+        "BDSC212"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "Physics-informed neural networks (PINNs) for solving PDE",
+      "category": "cross_language_discovery",
+      "source_file": "data/processed/text/BDSC212_00_AI_DS를위한수학_영강.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC212",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "Physics-informed neural networks (PINNs) for solving PDE"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R10",
+      "question": "AI/DS를위한수학을 들으려면 반드시 교재를 사야 하나요?",
+      "expected_codes": [
+        "BDSC212"
+      ],
+      "expected_sections": [
+        "교재및과제"
+      ],
+      "evidence_quote": "No required textbook for this course, but some materials are based on",
+      "category": "cross_language_named",
+      "source_file": "data/processed/text/BDSC212_00_AI_DS를위한수학_영강.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC212",
+          "evidence": [
+            {
+              "section": "교재및과제",
+              "snippets": [
+                "No required textbook for this course, but some materials are based on"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R11",
+      "question": "머신러닝 수업에서 Q-learning이나 가치 반복 같은 강화학습을 배우나요?",
+      "expected_codes": [
+        "BDSC302"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "Processes, Q-Learning, Value/Policy Iteration)",
+      "category": "cross_language_named",
+      "source_file": "data/processed/text/BDSC302_00_머신러닝_영강.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC302",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "Processes, Q-Learning, Value/Policy Iteration)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R12",
+      "question": "머신러닝 과목의 과제와 프로젝트 배점은 어떻게 되나요?",
+      "expected_codes": [
+        "BDSC302"
+      ],
+      "expected_sections": [
+        "평가방법"
+      ],
+      "evidence_quote": "Assignment 40 Project 10",
+      "category": "cross_language_named",
+      "source_file": "data/processed/text/BDSC302_00_머신러닝_영강.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC302",
+          "evidence": [
+            {
+              "section": "평가방법",
+              "snippets": [
+                "Assignment 40 Project 10"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R13",
+      "question": "데이터마이닝을 듣기 전에 R을 어느 정도 알아야 하나요?",
+      "expected_codes": [
+        "BDSC303"
+      ],
+      "expected_sections": [
+        "학습목표"
+      ],
+      "evidence_quote": "기초통계학과 R기본 사용법 숙지를 추천함.",
+      "category": "named_course_prerequisite",
+      "source_file": "data/processed/text/BDSC303_00_데이터마이닝.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC303",
+          "evidence": [
+            {
+              "section": "학습목표",
+              "snippets": [
+                "기초통계학과 R기본 사용법 숙지를 추천함."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R14",
+      "question": "데이터마이닝은 복습 과제가 있고 LMS를 사용하나요?",
+      "expected_codes": [
+        "BDSC303"
+      ],
+      "expected_sections": [
+        "교재및과제"
+      ],
+      "evidence_quote": "수업내용 복습을 위한 과제 수시부여. LMS 사용",
+      "category": "named_course_assignment",
+      "source_file": "data/processed/text/BDSC303_00_데이터마이닝.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC303",
+          "evidence": [
+            {
+              "section": "교재및과제",
+              "snippets": [
+                "수업내용 복습을 위한 과제 수시부여. LMS 사용"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R15",
+      "question": "KOSIS와 MDIS에서 공공데이터를 구해 실습하는 수업을 찾고 싶어요.",
+      "expected_codes": [
+        "BDSC309"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "공공데이터 이용방법 (KOSIS, MDIS)",
+      "category": "topic_discovery",
+      "source_file": "data/processed/text/BDSC309_00_공공데이터활용.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC309",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "공공데이터 이용방법 (KOSIS, MDIS)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R16",
+      "question": "공공데이터활용의 팀 과제는 몇 번이고 무엇을 하나요?",
+      "expected_codes": [
+        "BDSC309"
+      ],
+      "expected_sections": [
+        "교재및과제"
+      ],
+      "evidence_quote": "2회의 팀 기반 수시과제: 공공데이터 활용 분석결과 및 발표",
+      "category": "named_course_assignment",
+      "source_file": "data/processed/text/BDSC309_00_공공데이터활용.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC309",
+          "evidence": [
+            {
+              "section": "교재및과제",
+              "snippets": [
+                "2회의 팀 기반 수시과제: 공공데이터 활용 분석결과 및 발표"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R17",
+      "question": "시공간데이터분석캡스톤디자인의 기말 평가는 지필시험인가요, 발표인가요?",
+      "expected_codes": [
+        "BDSC319"
+      ],
+      "expected_sections": [
+        "평가방법"
+      ],
+      "evidence_quote": "기말고사 50%는 3번의 발표와 한번의 레포트로 구성됩니다.",
+      "category": "named_course_assessment",
+      "source_file": "data/processed/text/BDSC319_00_시공간데이터분석캡스톤디자인.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC319",
+          "evidence": [
+            {
+              "section": "평가방법",
+              "snippets": [
+                "기말고사 50%는 3번의 발표와 한번의 레포트로 구성됩니다."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R18",
+      "question": "시공간데이터분석캡스톤디자인은 몇 학년에게 권장되나요?",
+      "expected_codes": [
+        "BDSC319"
+      ],
+      "expected_sections": [
+        "평가방법"
+      ],
+      "evidence_quote": "3학년 이상이 수강하면 좋을 듯 합니다.",
+      "category": "named_course_prerequisite",
+      "source_file": "data/processed/text/BDSC319_00_시공간데이터분석캡스톤디자인.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC319",
+          "evidence": [
+            {
+              "section": "평가방법",
+              "snippets": [
+                "3학년 이상이 수강하면 좋을 듯 합니다."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R19",
+      "question": "Transformer를 바탕으로 BERT와 GPT의 구조를 공부하는 수업은 무엇인가요?",
+      "expected_codes": [
+        "BDSC325"
+      ],
+      "expected_sections": [
+        "평가방법"
+      ],
+      "evidence_quote": "BERT 및 GPT를 기반으로 LLM(large language model)의 구조와 작동에 관하여",
+      "category": "topic_discovery",
+      "source_file": "data/processed/text/BDSC325_00_통계학과인공지능PBL.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC325",
+          "evidence": [
+            {
+              "section": "평가방법",
+              "snippets": [
+                "BERT 및 GPT를 기반으로 LLM(large language model)의 구조와 작동에 관하여"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R20",
+      "question": "통계학과인공지능PBL은 머신러닝과 딥러닝을 이미 배운 학생에게 맞나요?",
+      "expected_codes": [
+        "BDSC325"
+      ],
+      "expected_sections": [
+        "평가방법"
+      ],
+      "evidence_quote": "통계학, 머신러닝, 딥러닝 관련과목을 모두 이수한 학생",
+      "category": "named_course_prerequisite",
+      "source_file": "data/processed/text/BDSC325_00_통계학과인공지능PBL.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC325",
+          "evidence": [
+            {
+              "section": "평가방법",
+              "snippets": [
+                "통계학, 머신러닝, 딥러닝 관련과목을 모두 이수한 학생"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R21",
+      "question": "분석 목적에 맞춰 데이터를 기획하고 비즈니스 의사결정에 활용하는 수업을 찾고 있어요.",
+      "expected_codes": [
+        "BDSC327"
+      ],
+      "expected_sections": [
+        "평가방법"
+      ],
+      "evidence_quote": "학생들이 분석 목적에 맞도록 Big Data를 기획할 수 있는 역량을 강화하여",
+      "category": "topic_discovery",
+      "source_file": "data/processed/text/BDSC327_00_빅데이터기획및분석.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC327",
+          "evidence": [
+            {
+              "section": "평가방법",
+              "snippets": [
+                "학생들이 분석 목적에 맞도록 Big Data를 기획할 수 있는 역량을 강화하여"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R22",
+      "question": "빅데이터기획및분석의 중간고사는 어떤 형식으로 치르고 얼마나 반영되나요?",
+      "expected_codes": [
+        "BDSC327"
+      ],
+      "expected_sections": [
+        "평가방법"
+      ],
+      "evidence_quote": "단답식으로 평가하여 30% 반영",
+      "category": "named_course_assessment",
+      "source_file": "data/processed/text/BDSC327_00_빅데이터기획및분석.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC327",
+          "evidence": [
+            {
+              "section": "평가방법",
+              "snippets": [
+                "단답식으로 평가하여 30% 반영"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R23",
+      "question": "데이터사이언스세미나I는 프로그래밍 경험이 없어도 수강할 수 있나요?",
+      "expected_codes": [
+        "BDSC331"
+      ],
+      "expected_sections": [
+        "학습목표"
+      ],
+      "evidence_quote": "프로그래밍 경험이 없어도 수강 가능",
+      "category": "named_course_prerequisite",
+      "source_file": "data/processed/text/BDSC331_00_데이터사이언스세미나I.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC331",
+          "evidence": [
+            {
+              "section": "학습목표",
+              "snippets": [
+                "프로그래밍 경험이 없어도 수강 가능"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R24",
+      "question": "ChromaDB나 FAISS로 문서 검색 챗봇을 만들어보는 수업이 있나요?",
+      "expected_codes": [
+        "BDSC331"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "ChromaDB, FAISS를 활용한 문서 벡터화 및 검색 로직 구축",
+      "category": "topic_discovery",
+      "source_file": "data/processed/text/BDSC331_00_데이터사이언스세미나I.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC331",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "ChromaDB, FAISS를 활용한 문서 벡터화 및 검색 로직 구축"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R25",
+      "question": "딥러닝이론은 이론만 배우나요, 실제 문제를 푸는 실습도 하나요?",
+      "expected_codes": [
+        "BDSC401"
+      ],
+      "expected_sections": [
+        "학습목표"
+      ],
+      "evidence_quote": "이론 강의를 바탕으로 실제 문제 해결 역량을 갖추기 위한 실습을 병행함.",
+      "category": "named_course_operation",
+      "source_file": "data/processed/text/BDSC401_00_딥러닝이론.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC401",
+          "evidence": [
+            {
+              "section": "학습목표",
+              "snippets": [
+                "이론 강의를 바탕으로 실제 문제 해결 역량을 갖추기 위한 실습을 병행함."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R26",
+      "question": "딥러닝이론의 주차별 내용에 오토인코더와 GAN이 포함되나요?",
+      "expected_codes": [
+        "BDSC401"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "오토인코더와 GAN",
+      "category": "named_course_content",
+      "source_file": "data/processed/text/BDSC401_00_딥러닝이론.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC401",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "오토인코더와 GAN"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R27",
+      "question": "소셜네트워크분석PBL은 팀프로젝트를 통해 문제를 해결하는 수업인가요?",
+      "expected_codes": [
+        "BDSC407"
+      ],
+      "expected_sections": [
+        "학습목표"
+      ],
+      "evidence_quote": "이론 강의를 바탕으로 실제 문제 해결 역량을 갖추기 위한 팀프로젝트를 진행함.",
+      "category": "named_course_operation",
+      "source_file": "data/processed/text/BDSC407_00_소셜네트워크분석PBL.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC407",
+          "evidence": [
+            {
+              "section": "학습목표",
+              "snippets": [
+                "이론 강의를 바탕으로 실제 문제 해결 역량을 갖추기 위한 팀프로젝트를 진행함."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R28",
+      "question": "가중 네트워크나 네트워크 안의 집단을 분석하는 수업이 있나요?",
+      "expected_codes": [
+        "BDSC407"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "네트워크 특성과 부그룹, 가중 네트워크",
+      "category": "topic_discovery",
+      "source_file": "data/processed/text/BDSC407_00_소셜네트워크분석PBL.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC407",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "네트워크 특성과 부그룹, 가중 네트워크"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R29",
+      "question": "인터랙티브데이터사이언스캡스톤디자인의 그룹 프로젝트에서는 어떤 개발 도구를 쓰나요?",
+      "expected_codes": [
+        "BDSC414"
+      ],
+      "expected_sections": [
+        "교과목개요"
+      ],
+      "evidence_quote": "students will utilize Python, Git, and JavaScript to solve various problems.",
+      "category": "cross_language_named",
+      "source_file": "data/processed/text/BDSC414_00_인터랙티브데이터사이언스캡스톤디자인_영강.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC414",
+          "evidence": [
+            {
+              "section": "교과목개요",
+              "snippets": [
+                "students will utilize Python, Git, and JavaScript to solve various problems."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R30",
+      "question": "모델 해석 가능성과 공정성도 다루는 인터랙티브 데이터 과목이 있나요?",
+      "expected_codes": [
+        "BDSC414"
+      ],
+      "expected_sections": [
+        "주별학습내용"
+      ],
+      "evidence_quote": "Machine Learning Interpretability & Fairness",
+      "category": "cross_language_discovery",
+      "source_file": "data/processed/text/BDSC414_00_인터랙티브데이터사이언스캡스톤디자인_영강.txt",
+      "expected_courses": [
+        {
+          "course_code": "BDSC414",
+          "evidence": [
+            {
+              "section": "주별학습내용",
+              "snippets": [
+                "Machine Learning Interpretability & Fairness"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
