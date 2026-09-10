@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-09-10T01:38:03.141423+00:00",
+  "checked_at_utc": "2026-09-10T01:45:31.613435+00:00",
   "platform": "Windows",
   "python": "3.12.14",
   "unit_tests": {
@@ -16,7 +16,7 @@
     "external_model_calls": 0
   },
   "code_sha256": {
-    "app.py": "4d3a3235760ce7000a21cacd1a4b44a0b0c94aa476df30b7b7427ed4be06c0ef",
+    "app.py": "f85c9c8f10b41a20b27c4fcfa5b75dd1ce5153a425aa82da61fe75aff90d5aa2",
     "gradio_app.py": "bc05e92336208a78272b580c0f05ebd84187c2b03f52a38b216a724e9da2b87a",
     "retrieval_core.py": "d5c15d3e01f90c4286f5543e7bb7268d0d74e3a949e66d2a81aaf34c2072827b",
     "run_demo.py": "5307ebd55692c3d95fd1ffeffca924fa332ed39d34dc58be3b288b4ea50ce5f4",
@@ -36,7 +36,7 @@
     "sugang_mate/cache.py": "7f705e454aa970914597f061018cde3272991400b954ede0de80759967e8e474",
     "sugang_mate/config.py": "650026eba5e061f8bca2c8efe97e354474baa8ae3c951fef08f93a9e71053823",
     "tests/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-    "tests/test_core.py": "895ee0398561964d8373ab3769276c328a6d6750067a92fc2f77d4e251b217fa",
+    "tests/test_core.py": "1e29d6931bb350a0d7c29309894d6d091ea45b431042234ed5ba9ff0685e1745",
     "tests/test_demo.py": "3c528ba3b89b0d3ff3026c7d2b83d3bfa6baac8087a6a237076c6be365f20ad3",
     "tests/test_evaluation.py": "37667fa4325088ae30b6ac3575ec0366ea013653de08d2069630c0a8baad5890"
   },

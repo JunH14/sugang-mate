@@ -71,9 +71,9 @@ class ConfigurationTests(unittest.TestCase):
             write_fixture(processed)
             self.assertEqual(resolve_data_path(project), processed)
             os.environ["SUGANG_DATA_PATH"] = "missing.jsonl"
-            self.assertEqual(resolve_data_path(project), project / "missing.jsonl")
+            self.assertEqual(resolve_data_path(project), (project / "missing.jsonl").resolve())
             os.environ["SUGANG_CHROMA_DIR"] = "custom-index"
-            self.assertEqual(resolve_chroma_dir(project), project / "custom-index")
+            self.assertEqual(resolve_chroma_dir(project), (project / "custom-index").resolve())
 
     def test_dotenv_is_local_and_caller_environment_wins(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {}, clear=True):

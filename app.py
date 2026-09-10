@@ -2270,7 +2270,8 @@ def build_learning_answer_for_courses(
             answer_lines.append("- 주별 학습내용의 주요 주제:")
             answer_lines.extend(f"  - {topic}" for topic in topics)
         elif weekly_text:
-            answer_lines.append(f"- 주별 학습내용: {re.sub(r'\s+', ' ', weekly_text)[:700]}")
+            weekly_summary = re.sub(r"\s+", " ", weekly_text)[:700]
+            answer_lines.append(f"- 주별 학습내용: {weekly_summary}")
         else:
             answer_lines.append("- 주별 학습내용은 강의계획서에서 별도로 확인되지 않습니다.")
 
