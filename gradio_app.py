@@ -621,6 +621,16 @@ def build_demo() -> gr.Blocks:
             with gr.Column(scale=1, min_width=280):
                 diagnostics_panel.render()
 
+        chatbot.clear(
+            fn=lambda: (
+                "### 근거 자료\n\n질문을 보내면 사용한 강의계획서가 여기에 표시됩니다.",
+                "### 응답 상태\n\n질문을 기다리고 있습니다.",
+            ),
+            outputs=[source_panel, diagnostics_panel],
+            queue=False,
+            api_visibility="private",
+        )
+
         with gr.Accordion("수집 과목 목록", open=False):
             course_table_component = gr.Markdown(course_table_markdown())
         with gr.Accordion("평가 범위와 실행 정보", open=False):

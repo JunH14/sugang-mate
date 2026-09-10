@@ -2,6 +2,8 @@
 
 [문서 모아보기](README.md) · [일반 실행·평가 재현](running.md)
 
+**[공개 데모 열기](https://sugang-mate.onrender.com)** · [공개 접속 확인 기록](../evaluation/deployment-checks.json)
+
 Gradio 화면을 Render의 무료 Python 웹 서비스로 실행합니다. 공개 데모는 **가상 과목 6개와 실제 Gemini API**를 사용합니다. 학교 원문·정제 본문·로컬 벡터 DB를 서버에 올리지 않습니다. 공개 접속 주소와 검증 완료 상태는 저장소 첫 화면에 기록합니다.
 
 ## Render 설정

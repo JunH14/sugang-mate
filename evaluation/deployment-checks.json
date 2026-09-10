@@ -1,0 +1,72 @@
+{
+  "checked_at_utc": "2026-09-10T03:14:01.203920+00:00",
+  "url": "https://sugang-mate.onrender.com",
+  "hosting": {
+    "provider": "Render",
+    "plan": "Free",
+    "region": "Singapore",
+    "python": "3.12.12",
+    "processes": 1
+  },
+  "first_deployment": {
+    "commit": "82311ff0b8f42083b5168066bb73fc1773062512",
+    "status": "live",
+    "build_and_start_seconds": 148
+  },
+  "runtime_sha256": {
+    "app.py": "090a0eac9ec381cc9474e2a8f4cf9821976ddacd8436ee2ba541d6f5da2a191a",
+    "gradio_app.py": "396469fc9c9bc2ee81100bfa852ba9a61883fe067fd76a7667324ed7ede28bc7",
+    "run_public.py": "227c1c6a27897aae73dc718536f0a9b13a01d9b0756ec3d5d012ef2512645677",
+    "requirements-online.txt": "af9840668b330a48d3aa32878ca9e704260604f42cffdaed75a014baee017f90"
+  },
+  "http_checks": {
+    "homepage": 200,
+    "gradio_config": 200,
+    "api_key_pattern_in_public_config": false,
+    "oversized_body_65537_bytes": 413
+  },
+  "browser_checks": [
+    {
+      "question": "CSV 파일에서 결측치를 처리하려면 어떤 과목이 관련돼?",
+      "passed": true,
+      "mode": "keyword_gemini",
+      "sources": [
+        "DEMO101"
+      ],
+      "observed_non_cached_generation": true,
+      "displayed_total_seconds": 4.97
+    },
+    {
+      "question": "DEMO201과 DEMO202의 평가방식을 비교해줘",
+      "passed": true,
+      "mode": "structured_course_assessment",
+      "sources": [
+        "DEMO201",
+        "DEMO202"
+      ],
+      "checked_facts": [
+        "DEMO201 midterm 40%",
+        "DEMO202 individual project 30%"
+      ]
+    },
+    {
+      "question": "그중 전공필수는 몇 개야?",
+      "passed": true,
+      "mode": "structured_followup",
+      "sources": [
+        "DEMO201"
+      ],
+      "history": "previous comparison",
+      "count": 1
+    },
+    {
+      "question": "천체물리학 실험 수업이 있어?",
+      "passed": true,
+      "mode": "fallback",
+      "sources": [],
+      "reported_missing_evidence": true
+    }
+  ],
+  "scope": "One public deployment smoke check through browser and HTTP; not a load test or availability guarantee.",
+  "privacy": "Only authored synthetic course questions were submitted to the hosted app."
+}
