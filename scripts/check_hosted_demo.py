@@ -21,7 +21,6 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-import uuid
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -114,6 +113,17 @@ def verify_chat_contract(config: dict, info: dict) -> str:
         or len(endpoint.get("returns", [])) != 3
     ):
         raise SmokeFailure("public_chat_contract_changed")
+    # /info describes the SDK interface, which hides State components. Raw
+    # /call requests/responses still contain their positional placeholders.
+    components = {item.get("id"): item.get("type") for item in config.get("components", [])}
+    dependencies = [item for item in config.get("dependencies", []) if item.get("api_name") == "chat"]
+    if len(dependencies) != 1:
+        raise SmokeFailure("raw_chat_contract_changed")
+    dependency = dependencies[0]
+    input_types = [components.get(item) for item in dependency.get("inputs", [])]
+    output_types = [components.get(item) for item in dependency.get("outputs", [])]
+    if input_types != ["textbox", "state"] or output_types != ["json", "state", "markdown", "markdown"]:
+        raise SmokeFailure("raw_chat_contract_changed")
     return prefix
 
 
@@ -189,16 +199,22 @@ class AnonymousClient:
             return status
 
     def chat(self, prefix: str, question: str):
-        # A separate unguessable state identifier for each independent scenario;
-        # it provides conversational routing, not authentication or an IP quota.
+        # Gradio 6.17.3's raw API requires the hidden State input placeholder.
+        # Do not set session_hash: /call/.../{event_id} reads the queue keyed by
+        # event_id, which is the server's default session when none is supplied.
+        # Each scenario is independent; no browser cookies or session are reused.
         event = self.get_json(prefix + "/call/chat", {
-            "data": [question], "session_hash": uuid.uuid4().hex,
+            "data": [question, None],
         })
         event_id = event.get("event_id", "")
         if not isinstance(event_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", event_id):
             raise SmokeFailure("invalid_chat_event_id")
         with self._request(prefix + "/call/chat/" + event_id, stream=True) as response:
-            return read_complete_event(response, deadline=time.monotonic() + 120)
+            payload = read_complete_event(response, deadline=time.monotonic() + 120)
+        if not isinstance(payload, list) or len(payload) != 4 or payload[1] is not None:
+            raise SmokeFailure("invalid_raw_chat_result_shape")
+        # Mirror the official SDK's skipped-State output handling explicitly.
+        return [payload[0], payload[2], payload[3]]
 
 
 def verify_chat_result(payload, course_code: str | None, expected_mode: str) -> dict:

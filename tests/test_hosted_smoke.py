@@ -20,7 +20,11 @@ def config(kind="collected", count="25", digest=HASH):
     return {"api_prefix": "/gradio_api", "components": [{"type": "html", "props": {"value": (
         '<div class="status-strip" '
         f'data-dataset-kind="{kind}" data-course-count="{count}" data-dataset-sha256="{digest}"></div>'
-    )}}]}
+    )}}, {"id": 9, "type": "textbox"}, {"id": 22, "type": "state"},
+        {"id": 21, "type": "json"}, {"id": 10, "type": "markdown"},
+        {"id": 11, "type": "markdown"}], "dependencies": [{
+            "api_name": "chat", "inputs": [9, 22], "outputs": [21, 22, 10, 11],
+        }]}
 
 
 INFO = {"named_endpoints": {"/chat": {
@@ -62,6 +66,30 @@ class HostedSmokeTests(unittest.TestCase):
         self.assertEqual(verify_chat_contract(config(), INFO), "/gradio_api")
         with self.assertRaises(SmokeFailure):
             verify_chat_contract(config(), {"named_endpoints": {"/chat": {"api_visibility": "private"}}})
+        changed = config()
+        changed["dependencies"][0]["inputs"] = [9]
+        with self.assertRaisesRegex(SmokeFailure, "raw_chat_contract_changed"):
+            verify_chat_contract(changed, INFO)
+
+    def test_raw_gradio_call_includes_state_but_lets_server_choose_event_session(self):
+        application_output = result()
+        raw_output = [application_output[0], None, *application_output[1:]]
+        sse = ("event: complete\ndata: " + json.dumps(raw_output) + "\n\n").encode()
+        client = AnonymousClient("https://example.com")
+        with patch.object(client, "get_json", return_value={"event_id": "server-event-id"}) as post:
+            with patch.object(client, "_request", return_value=io.BytesIO(sse)) as get:
+                self.assertEqual(client.chat("/gradio_api", "question"), application_output)
+        post.assert_called_once_with("/gradio_api/call/chat", {"data": ["question", None]})
+        get.assert_called_once_with("/gradio_api/call/chat/server-event-id", stream=True)
+
+    def test_raw_state_output_must_be_hidden_and_not_return_conversation_history(self):
+        raw = ["answer", "unexpected history", "sources", "diagnostics"]
+        sse = ("event: complete\ndata: " + json.dumps(raw) + "\n\n").encode()
+        client = AnonymousClient("https://example.com")
+        with patch.object(client, "get_json", return_value={"event_id": "test"}):
+            with patch.object(client, "_request", return_value=io.BytesIO(sse)):
+                with self.assertRaisesRegex(SmokeFailure, "invalid_raw_chat_result_shape"):
+                    client.chat("/gradio_api", "question")
 
     def test_sse_discards_heartbeat_and_reads_utf8_complete_event(self):
         payload = result()

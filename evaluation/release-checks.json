@@ -1,9 +1,9 @@
 {
-  "checked_at_utc": "2026-09-10T04:16:22.789665+00:00",
+  "checked_at_utc": "2026-09-10T04:25:49.278714+00:00",
   "platform": "Windows",
   "python": "3.12.14",
   "unit_tests": {
-    "passed": 96,
+    "passed": 98,
     "failed": 0
   },
   "public_verification": {
@@ -25,7 +25,7 @@
     "scripts/audit_legacy_evaluation.py": "d43c3f37fe7f384a8a6dfad1cfd73c8b77d98d1f331bd7b75cdb4ab33eb9972d",
     "scripts/benchmark_retrieval.py": "ebf7e9a0fbbede679c5036178dfcd763a5bdb394a14ddc7c2f409753127bfc60",
     "scripts/build_vector_db.py": "7bea47e9a44ada806654ad20d86626e765171dd0b024a25c2352f595f4f8594d",
-    "scripts/check_hosted_demo.py": "3b88ea537470570bc7a98e44e546ee22e143875d8c2ed30bcd7740ba533629b0",
+    "scripts/check_hosted_demo.py": "534bea8ada61792607a0de5e70e6f629d7d626b21a96b7d75254713e4c7a1d81",
     "scripts/collect_syllabi.py": "ebf709ca0084c3a99bee28220a2fb4594fc7dc65cea2060fabdcc0714add90b0",
     "scripts/evaluate_rag.py": "020e4ee13307b4e307005d64b1b30ae2a7a4915a02303c51683f1ffb016f7985",
     "scripts/export_public.py": "ebeb802ab7a553e5497ee9ef4498d5635ca24578760d1682165f51f6b7cb6a22",
@@ -45,7 +45,7 @@
     "tests/test_demo.py": "3c528ba3b89b0d3ff3026c7d2b83d3bfa6baac8087a6a237076c6be365f20ad3",
     "tests/test_evaluation.py": "37667fa4325088ae30b6ac3575ec0366ea013653de08d2069630c0a8baad5890",
     "tests/test_hosted_data.py": "d0924640b13a6f97744888a3e00725fb5cff7570d559d1e836adbeef533b46bc",
-    "tests/test_hosted_smoke.py": "bad197c67ed7f99ef4988c61f2dd5eee2fc409c13e74c35edd1c48e793262b41",
+    "tests/test_hosted_smoke.py": "2fa8e104ec1903e66d60928c2d45ae0af0b4011d1a03b04236670884666d90d4",
     "tests/test_live_core.py": "d72d3032becedcf7e04d057c8139a47a422e81ebbde75172b0c8bf32943b18f0",
     "tests/test_public_demo.py": "be8ea0d8b2417ce3c392dd22140a568c3182d40814a58ae9968e21ad72ddd4df",
     "tests/test_public_http.py": "70c889964efebb3fd5c9813d673f141a31c3915c3130f66b4c9e94e836c7ba04",
@@ -54,6 +54,5 @@
   "requirements_lock_sha256": "54150a79e8128b603d0ca5ca3c86af43cff2f0e0ea17ea33fd45ebb9f893c08e",
   "scope": "Local validation only; see GitHub Actions for remote CI results",
   "ci_workflow_url": "https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml",
-  "external_model_test_executed": false,
-  "private_regression_passed": true
+  "external_model_test_executed": false
 }
