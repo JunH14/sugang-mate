@@ -73,7 +73,9 @@ python -m unittest discover -s tests -v
 python scripts/verify_release.py
 ~~~
 
-Windows / Python 3.12의 새 가상환경에서 실행했다. GitHub Actions의 Python 3.11·3.12 검사 설정도 추가했지만 원격 CI 실행 결과는 아직 없다. 로컬 결과는 [release-checks.json](../evaluation/release-checks.json)에 기록한다.
+Windows / Python 3.12의 새 가상환경에서 자동 테스트 32개와 공개 시나리오 5개를 확인했다. GitHub Actions에서도 **Windows·Ubuntu × Python 3.11·3.12의 네 환경이 모두 통과**했다. [성공한 실행 기록](https://github.com/JunH14/sugang-mate/actions/runs/34426806501)과 [최신 검사 상태](https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml)를 제공한다. 로컬 결과와 공개 Python 파일의 해시는 [release-checks.json](../evaluation/release-checks.json)에 기록한다.
+
+첫 원격 실행에서 발견한 Python 3.11의 f-string 문법 차이와 Windows 짧은 경로 표기 차이를 수정한 뒤 통과했다. CI는 외부 모델 API를 호출하지 않는다.
 
 ## 5. 미측정 항목
 
@@ -84,4 +86,3 @@ Windows / Python 3.12의 새 가상환경에서 실행했다. GitHub Actions의 
 - 인터넷 배포의 부하·비용·운영 안정성
 
 자동 테스트에 통과한 코드와 위 항목의 검증 완료를 구분한다. 실제 사용성 검증은 [별도 절차](user-study.md)를 준비했다.
-

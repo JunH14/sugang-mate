@@ -92,6 +92,8 @@ git remote add origin https://github.com/JunH14/sugang-mate.git
 git push -u origin main
 ~~~
 
-실제 사용자명·저장소 주소로 변경한다. 원본 기말 제출 폴더 전체를 선택하지 않는다. GitHub Actions는 첫 push 이후 실제 실행 결과를 확인한다.
+위 새 저장소 초기화 절차는 별도 공개본을 만들 때의 예시다. 이미 이 저장소를 clone했다면 초기화 대신 수정·커밋·push를 진행한다. 다른 계정으로 공개할 때는 주소를 변경한다. 원본 기말 제출 폴더 전체를 선택하지 않는다.
+
+현재 공개 저장소는 [JunH14/sugang-mate](https://github.com/JunH14/sugang-mate)다. GitHub Actions의 Windows·Ubuntu / Python 3.11·3.12 검사를 통과했으며 [최신 실행 상태](https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml)를 확인할 수 있다.
 
 공식 안내: [기존 로컬 코드 업로드](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github), [Gradio ChatInterface](https://www.gradio.app/docs/gradio/chatinterface).

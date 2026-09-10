@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-09-10T01:45:31.613435+00:00",
+  "checked_at_utc": "2026-09-10T01:49:47.799397+00:00",
   "platform": "Windows",
   "python": "3.12.14",
   "unit_tests": {
@@ -25,13 +25,12 @@
     "scripts/benchmark_retrieval.py": "ebf7e9a0fbbede679c5036178dfcd763a5bdb394a14ddc7c2f409753127bfc60",
     "scripts/build_vector_db.py": "7bea47e9a44ada806654ad20d86626e765171dd0b024a25c2352f595f4f8594d",
     "scripts/collect_syllabi.py": "ebf709ca0084c3a99bee28220a2fb4594fc7dc65cea2060fabdcc0714add90b0",
-    "scripts/evaluate_query_parser.py": "fcc8b72bd305b9e07c4c278e994445dbe7f3ade88bf3f89e6351a13f1777c6e3",
     "scripts/evaluate_rag.py": "020e4ee13307b4e307005d64b1b30ae2a7a4915a02303c51683f1ffb016f7985",
     "scripts/export_public.py": "e2912f7b35db4314ba0e334b9688f9645893ff70155d10cc295c11a90a71071a",
     "scripts/extract_texts.py": "6ec3454233c754fd3b00ea60767ddb39145d0035c870207cd83f2369a61d453b",
-    "scripts/record_validation.py": "6af3e5ced60e444bdbaa95ffc1f7614493cdb35df2b3c5a3ef344c88b6f2c39c",
+    "scripts/record_validation.py": "f790a2595267550e754c39c0c3518c053a9524d85211bad2e18fc9838789b984",
     "scripts/stress_test_generated_queries.py": "adad307334ca088638188538c251b1b00ffc71e7f17f8ebe90164bc775a4d62b",
-    "scripts/verify_release.py": "07227c6a93ab671746866705dd52d5a346f12512f516b921e245741b4b686996",
+    "scripts/verify_release.py": "aa5416b073a71133c52dadc2df1d03a5a372fc24923f5c2940cf0c074b6e2ae2",
     "sugang_mate/__init__.py": "d8ff18c5fd3b576a84894dadfe17662d3b5ff6b35a423ee0cf9569e63f7b4e82",
     "sugang_mate/cache.py": "7f705e454aa970914597f061018cde3272991400b954ede0de80759967e8e474",
     "sugang_mate/config.py": "650026eba5e061f8bca2c8efe97e354474baa8ae3c951fef08f93a9e71053823",

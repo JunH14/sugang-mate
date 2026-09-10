@@ -1,11 +1,11 @@
 {
   "scope": "Existing functional regression assertions, not independent answer factuality",
   "summary": {
-    "created_at": "2026-09-10 10:45:33",
+    "created_at": "2026-09-10 10:49:49",
     "case_count": 103,
-    "average_seconds": 0.017,
+    "average_seconds": 0.016,
     "median_seconds": 0.003,
-    "max_seconds": 0.057,
+    "max_seconds": 0.049,
     "expected_retrieval_accuracy": 1.0,
     "expected_mode_accuracy": 1.0,
     "mean_recall_at_k": 1.0,
@@ -24,7 +24,7 @@
   "corpus_sha256": "6584e2b8bb13fd9147c035fa9c9510475412c9e26f7ddabcfb12f0da285ed6f1",
   "app_sha256": "f85c9c8f10b41a20b27c4fcfa5b75dd1ce5153a425aa82da61fe75aff90d5aa2",
   "evaluator_sha256": "020e4ee13307b4e307005d64b1b30ae2a7a4915a02303c51683f1ffb016f7985",
-  "private_result_sha256": "2f44b9fe746e14b4198d698ec70986e048409ff2ccb0259698d2652216bba167",
+  "private_result_sha256": "b8c07a575b796ef476f7553f25e70d4ed3ea5776bcd2a7022d924d667256523a",
   "result_mode_counts": {
     "structured_course_assessment": 3,
     "extractive": 2,

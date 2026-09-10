@@ -6,6 +6,7 @@ import os
 import re
 from pathlib import Path
 import sys
+from export_public import public_files, validate
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -24,9 +25,9 @@ def main() -> int:
         path = ROOT / filename
         if not path.is_file() or path.stat().st_size == 0:
             raise RuntimeError(f"Missing required release file: {filename}")
-    sources = list((ROOT / "sugang_mate").glob("*.py")) + list((ROOT / "scripts").glob("*.py"))
-    sources += list((ROOT / "tests").glob("*.py"))
-    sources += [ROOT / name for name in ("app.py", "gradio_app.py", "retrieval_core.py")]
+    paths = public_files()
+    validate(paths)
+    sources = [path for path in paths if path.suffix == ".py"]
     for path in sources:
         ast.parse(path.read_text(encoding="utf-8-sig"), filename=path.name)
     # Documentation is part of the release: local links must remain usable.

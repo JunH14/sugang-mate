@@ -12,6 +12,7 @@ import re
 import statistics
 import subprocess
 import sys
+from export_public import public_files
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -42,9 +43,7 @@ def main():
     count = re.search(r"Ran (\d+) tests", tests.stderr)
     if not count:
         raise RuntimeError("Unable to determine test count")
-    code_paths = [ROOT / p for p in ("app.py", "gradio_app.py", "retrieval_core.py", "run_demo.py")]
-    for folder in ("sugang_mate", "tests", "scripts"):
-        code_paths += list((ROOT / folder).glob("*.py"))
+    code_paths = [path for path in public_files() if path.suffix == ".py"]
     record = {
         "checked_at_utc": datetime.now(timezone.utc).isoformat(),
         "platform": platform.system(), "python": platform.python_version(),
