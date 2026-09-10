@@ -1,12 +1,15 @@
 """Hosted entrypoint boundaries, exercised without external requests."""
 import importlib
+import hashlib
+import json
 import os
 from pathlib import Path
 from types import SimpleNamespace
 import unittest
+import tempfile
 from unittest.mock import patch
 
-from run_public import configure_public_environment
+from run_public import configure_public_environment, public_dataset
 from sugang_mate.public_limits import PublicLimits, PublicLimitError
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,9 +21,10 @@ class PublicDemoTests(unittest.TestCase):
         with patch.dict(os.environ, {"SUGANG_OFFLINE": "1", "SUGANG_DATA_PATH": "data/sample/syllabus_texts.jsonl"}):
             cls.ui = importlib.import_module("gradio_app")
 
-    def test_public_entrypoint_overrides_private_data_and_administration(self):
+    def test_explicit_sample_mode_overrides_private_data_and_administration(self):
         with patch.dict(os.environ, {
             "SUGANG_DATA_PATH": "private.jsonl", "ADMIN_PASSWORD": "fixture",
+            "SUGANG_PUBLIC_DATA_MODE": "sample",
             "SUGANG_OFFLINE": "1", "GEMINI_RETRY_ATTEMPTS": "9",
         }):
             configure_public_environment()
@@ -29,6 +33,36 @@ class PublicDemoTests(unittest.TestCase):
             self.assertEqual(os.environ["SUGANG_OFFLINE"], "0")
             self.assertEqual(os.environ["GEMINI_RETRY_ATTEMPTS"], "1")
             self.assertEqual(os.environ["GEMINI_FALLBACK_MODELS"], "")
+
+    def test_collected_mode_requires_server_data_without_falling_back(self):
+        with patch.dict(os.environ, {"SUGANG_PUBLIC_DATA_MODE": "collected", "SUGANG_PUBLIC_DATA_PATH": "missing-hosted-fixture.jsonl"}):
+            with self.assertRaisesRegex(ValueError, "Hosted dataset missing"):
+                public_dataset(ROOT)
+
+    def test_collected_mode_checks_reviewed_content_identity(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "evaluation").mkdir()
+            path = root / "reviewed.jsonl"
+            path.write_bytes(b'{"course_code":"TEST101","text":"course fixture"}\n')
+            report = {"hosted_dataset_sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "document_count": 1}
+            (root / "evaluation/hosted-data-checks.json").write_text(json.dumps(report), encoding="utf-8")
+            with patch.dict(os.environ, {"SUGANG_PUBLIC_DATA_MODE": "collected", "SUGANG_PUBLIC_DATA_PATH": "reviewed.jsonl"}):
+                selected, mode, fingerprint = public_dataset(root)
+                self.assertEqual(selected, path.resolve())
+                self.assertEqual(mode, "collected")
+                self.assertEqual(fingerprint, report["hosted_dataset_sha256"])
+                path.write_bytes(b'{"course_code":"TEST101","text":"different course"}\n')
+                with self.assertRaisesRegex(ValueError, "does not match"):
+                    public_dataset(root)
+
+    def test_public_status_uses_loaded_course_count(self):
+        with patch.object(self.ui, "PUBLIC_DEMO", True), patch.object(self.ui, "is_sample_data", return_value=False), patch.object(self.ui.core.RAG, "syllabi", [None] * 25):
+            status = self.ui.status_html()
+        self.assertIn('data-course-count="25"', status)
+        self.assertIn('data-dataset-kind="collected"', status)
+        self.assertIn("실제 수집 과목", status)
+        self.assertNotIn("가상 과목", status)
 
     def test_changing_session_does_not_reset_address_quota(self):
         limits = PublicLimits(chat_limit=1)

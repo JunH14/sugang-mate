@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "prepared_at_utc": "2026-09-10T04:14:42.890657+00:00",
+  "hosted_dataset_sha256": "134c09d53cd3588555538459ee470fe9d540fcfe75b37c24d09c960929769b9f",
+  "document_count": 25,
+  "source_dataset_sha256": "6584e2b8bb13fd9147c035fa9c9510475412c9e26f7ddabcfb12f0da285ed6f1",
+  "preparer_sha256": "df0088722ba429179371b94e0fce0454021222d5664fe96b46cd67ee563d5a32",
+  "course_count": 25,
+  "byte_count": 246527,
+  "schedule_entry_count": 34,
+  "represented_section_count": 26,
+  "purpose": "Private server secret-file snapshot for the user-authorized public course demo; dataset excluded from Git.",
+  "redaction_counts": {
+    "emails_removed": 33,
+    "known_extraction_markers_removed": 226,
+    "labeled_ids_removed": 0,
+    "local_paths_removed": 0,
+    "phone_numbers_removed": 52,
+    "resident_ids_removed": 0,
+    "text_path_fields_cleared": 25,
+    "unrecognized_metadata_fields_removed": 0,
+    "url_query_parameters_removed": 153,
+    "urls_sanitized": 51
+  },
+  "residual_pattern_counts": {
+    "emails": 0,
+    "phone_numbers": 0,
+    "resident_ids": 0,
+    "local_paths": 0,
+    "known_extraction_markers": 0
+  },
+  "preservation_checks": {
+    "academic_metadata_unchanged": true,
+    "duplicate_sections_unchanged_except_citation_url": true,
+    "course_order_preserved": true,
+    "official_course_links_preserved": true
+  },
+  "extraction_quality": {
+    "documents_with_known_markers_before": 10,
+    "known_markers_removed_only": [
+      "氠瑢",
+      "漠杳",
+      "捤獥",
+      "汤捯",
+      "湰灧",
+      "慤桥",
+      "潴景"
+    ],
+    "remedy": "Remove exact recurring extraction markers only; do not reconstruct missing words, grades or table alignment.",
+    "remaining_limitations": "Other OCR/HWP corruption, table interpretation and conflicting source metadata still require original-file review."
+  },
+  "offline_regression": {
+    "scope": "Existing functional assertions on the sanitized server snapshot; not independent answer factuality",
+    "case_count": 103,
+    "passed": 103,
+    "failed": 0,
+    "mode": "keyword_extract",
+    "course_count": 25,
+    "chunk_count": 304,
+    "cache_disabled": true,
+    "external_model_calls": 0,
+    "app_sha256": "090a0eac9ec381cc9474e2a8f4cf9821976ddacd8436ee2ba541d6f5da2a191a",
+    "evaluator_sha256": "020e4ee13307b4e307005d64b1b30ae2a7a4915a02303c51683f1ffb016f7985",
+    "private_results_sha256": "1c64791362bff573255dbdbc759704f1539215a2085949c747755346a7f46e31",
+    "hosted_dataset_sha256": "134c09d53cd3588555538459ee470fe9d540fcfe75b37c24d09c960929769b9f"
+  },
+  "synthetic_export_tests": {
+    "passed": 10,
+    "failed": 0
+  }
+}

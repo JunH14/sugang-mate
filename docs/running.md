@@ -26,7 +26,7 @@ $env:SUGANG_DATA_PATH="data/processed/syllabus_texts.jsonl"
 .\.venv\Scripts\python.exe gradio_app.py
 ~~~
 
-`SUGANG_DATA_PATH`를 생략하면 로컬 정제 파일이 있을 때 우선 읽는다. 명시한 파일이 없으면 오류를 반환한다. 공개 데모 실행기 `run_demo.py`는 항상 가상 데이터를 선택하므로 실제 데이터 실행에는 `gradio_app.py`를 사용한다.
+`SUGANG_DATA_PATH`를 생략하면 로컬 정제 파일이 있을 때 우선 읽는다. 명시한 파일이 없으면 오류를 반환한다. 로컬 오프라인 실행기 `run_demo.py`는 항상 가상 데이터를 선택하므로 실제 데이터의 로컬 실행에는 `gradio_app.py`를 사용한다. 공개 서버의 검토된 정제본 실행은 [별도 배포 경로](deployment.md)를 따른다.
 
 ## 3. 선택적 수집·Gemini/Chroma 실행
 

@@ -53,6 +53,8 @@ def dataset_label() -> str:
 def example_questions() -> list[str]:
     if is_sample_data():
         return ["CSV 파일에서 결측치를 처리하려면 어떤 과목이 관련돼?", "DEMO201과 DEMO202의 평가방식을 비교해줘", "전공필수 과목을 알려줘", "월요일 수업을 알려줘"]
+    if PUBLIC_DEMO:
+        return ["BDSC205에서 SAS를 다룬다는 근거가 있어?", "수리통계학은 무슨 요일 몇 시에 수업해?", "전공필수 과목을 알려줘", "BDSC401의 강의계획서를 근거로 딥러닝이론의 특징을 설명해줘"]
     return core.EXAMPLE_QUESTIONS
 
 
@@ -231,9 +233,12 @@ def course_table_markdown() -> str:
 
 def status_html() -> str:
     if PUBLIC_DEMO:
-        return """
-        <div class="status-strip">
-          <div><strong>6개</strong><span>가상 과목</span></div>
+        kind = "sample" if is_sample_data() else "collected"
+        fingerprint = html.escape(os.environ.get("SUGANG_PUBLIC_DATA_SHA256", ""), quote=True)
+        label = "가상 과목" if is_sample_data() else "실제 수집 과목"
+        return f"""
+        <div class="status-strip" data-dataset-kind="{kind}" data-course-count="{len(core.RAG.syllabi)}" data-dataset-sha256="{fingerprint}">
+          <div><strong>{len(core.RAG.syllabi)}개</strong><span>{label}</span></div>
           <div><strong>비교·후속 질문</strong><span>대화로 탐색</span></div>
           <div><strong>강의계획서</strong><span>답변 근거 확인</span></div>
           <div><strong>Gemini 연결</strong><span>본문 질문 AI 답변</span></div>
@@ -545,7 +550,7 @@ def build_demo() -> gr.Blocks:
         gr.Markdown(
             "# 수강메이트\n"
             "강의계획서를 찾아보고, 과목을 비교하고, 답변의 근거를 확인하세요.\n\n"
-            + ("**공개 데모:** 직접 작성한 가상 과목을 사용합니다. 실제 수강신청 정보가 아닙니다." if is_sample_data() else "2026학년도 1학기 고려대학교 세종캠퍼스 강의계획서 기반 · 최종 수강 정보는 학교 공지를 확인하세요."),
+            + ("**실행 예시:** 직접 작성한 가상 과목을 사용합니다. 실제 수강신청 정보가 아닙니다." if is_sample_data() else "직접 수집한 2026학년도 1학기 고려대학교 세종캠퍼스 빅데이터사이언스학부 강의계획서 기반 · 최종 수강 정보는 학교 공지를 확인하세요."),
             elem_id="project-header",
         )
         status_component = gr.HTML(status_html())
@@ -634,7 +639,7 @@ def build_demo() -> gr.Blocks:
         with gr.Accordion("수집 과목 목록", open=False):
             course_table_component = gr.Markdown(course_table_markdown())
         with gr.Accordion("평가 범위와 실행 정보", open=False):
-            gr.Markdown("공개 데모는 가상 데이터의 기능 예시입니다. 실제 과목의 데이터 품질·검색 진단·기존 평가 감사 결과는 저장소의 `docs/evaluation.md`에 실행 조건과 함께 기록했습니다. 현재 화면의 응답 시간을 전체 서비스 성능으로 해석하지 않습니다.")
+            gr.Markdown(("이 화면은 가상 데이터의 기능 예시입니다. " if is_sample_data() else "이 화면은 프로젝트에서 수집한 실제 강의계획서의 정제본을 사용합니다. 수집 당시 자료이며 실시간 수강신청 정보가 아닙니다. 일부 첨부 문서의 추출 품질과 미기재 항목에 한계가 있습니다. ") + "데이터 품질·검색 진단·평가 결과는 [평가 보고서](https://github.com/JunH14/sugang-mate/blob/main/docs/evaluation.md)에 실행 조건과 함께 기록했습니다. 현재 화면의 응답 시간을 전체 서비스 성능으로 해석하지 않습니다.")
             gr.Markdown(
                 f"- 문서: {dataset_label()} · {len(core.RAG.syllabi)}개\n"
                 "- 분할: 문서 구역 보존, `chunk_size=900`, `chunk_overlap=120`\n"
@@ -644,7 +649,7 @@ def build_demo() -> gr.Blocks:
                 f"- 성능: 동일 질문 최대 {core.RAG.answer_cache_max}개, {core.RAG.answer_cache_ttl_seconds // 60}분 TTL 캐시\n"
                 "- 환각 방지: 검색 문서만 사용하고 확인되지 않는 정보는 명시적으로 제외"
             )
-        with gr.Accordion("관리자 데이터 갱신", open=False, elem_id="admin-update", visible=bool(ADMIN_PASSWORD) and not core.offline_enabled() and not is_sample_data()):
+        with gr.Accordion("관리자 데이터 갱신", open=False, elem_id="admin-update", visible=bool(ADMIN_PASSWORD) and not PUBLIC_DEMO and not core.offline_enabled() and not is_sample_data()):
             gr.Markdown(latest_data_status())
             admin_password = gr.Textbox(
                 label="관리자 비밀번호",
@@ -701,6 +706,10 @@ def main() -> None:
         css=CSS,
         head=ENTER_TO_SUBMIT_HEAD,
         app_kwargs={"middleware": [Middleware(RequestSizeLimit)]} if PUBLIC_DEMO else None,
+        blocked_paths=[
+            "/etc/secrets", str(core.RAG.data_path.resolve()),
+            str(PROJECT_DIR / "sugang-syllabi.jsonl"), str(PROJECT_DIR / ".env"),
+        ] if PUBLIC_DEMO else None,
     )
     print(f"Local URL: {local_url}", flush=True)
     if share_url:
