@@ -11,9 +11,9 @@
 - **[온라인 실행·배포](deployment.md)** — 공개 데모 구성, 서버 설정과 요청 제한입니다.
 - **[프로젝트 소개](portfolio.md)** — 해결하려는 문제, 구현 범위, 포트폴리오 설명입니다.
 
-공개 서버는 2026학년도 1학기 수집 자료 25개로 운영하며, 브라우저에서 Gemini 답변·과목 비교·후속 질문을 확인했습니다. 방문자는 설치·API 키·학교 로그인 없이 사용할 수 있습니다. 로컬 `run_demo.py`는 가상 과목 6개로 동작합니다. 주소와 최신 상태는 [프로젝트 첫 화면](../README.md)에 안내합니다.
+공개 서버는 2026학년도 1학기 수집 자료 25개로 운영하며 브라우저에서 Gemini 답변·과목 비교·후속 질문을 확인했습니다. 방문자는 설치·API 키·학교 로그인 없이 사용할 수 있습니다. 로컬 `run_demo.py`는 가상 과목 6개로 동작합니다. 주소와 최신 상태는 [프로젝트 첫 화면](../README.md)에 안내합니다.
 
-공개 화면은 대화와 입력창을 중심으로 구성합니다. 과거 답변의 근거도 그 답변에서 다시 펼칠 수 있으며, 새 대화·과목 목록·서비스 설명은 메뉴에서 찾을 수 있습니다. PC·모바일 첫 화면은 [프로젝트 소개 화면](../README.md#이렇게-사용합니다)에서 볼 수 있습니다.
+공개 화면은 대화와 입력창을 중심으로 구성합니다. 과거 답변의 근거도 그 답변에서 다시 펼칠 수 있으며 새 대화·과목 목록·서비스 설명은 메뉴에서 찾을 수 있습니다. PC·모바일 첫 화면은 [프로젝트 소개 화면](../README.md#이렇게-사용합니다)에서 볼 수 있습니다.
 
 ## 설계 이해하기
 
@@ -43,7 +43,7 @@ flowchart LR
 - **[평가 보고서](evaluation.md)** — 현재 기능 검사, 과거 개선 기록 감사, 신규 검색 진단을 구분한 결과와 한계입니다.
 - **[실제 API 검증](live-api-validation.md)** — SDK 요청 계측과 원문 대조 결과입니다.
 - **[GitHub 자동 검사](https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml)** — 운영체제·Python 버전별 최신 실행 상태입니다.
-- **[공개 서버 외부 검사](https://github.com/JunH14/sugang-mate/actions/runs/34437384036)** — GitHub의 별도 환경에서 로그인·방문자 API 키 없이 근거 질문·시간표·범위 밖 안내 3개를 통과했습니다. 재시작 후 같은 25개 자료와 파일 해시도 확인했습니다.
+- **[최신 공개 서버 외부 검사](https://github.com/JunH14/sugang-mate/actions/runs/34442016281)** — GitHub의 별도 환경에서 로그인·방문자 API 키 없이 근거 질문·시간표·범위 밖 안내와 새 채팅 화면의 시간표 요청까지 4개 검사를 통과했습니다. 캐시를 쓰지 않은 실제 Gemini 생성도 확인했습니다.
 - **[사용자 검증 계획](user-study.md)** — 향후 학생 대상 사용성 평가 절차입니다. 아직 수행한 실험은 아닙니다.
 
 현재 자동 테스트 수와 코드 해시는 [최신 검사 기록](../evaluation/release-checks.json)을 기준으로 합니다. 이전 기록의 오프라인 기능 회귀 **103/103개**, 실제 API **16개 흐름**과 생성 답변 12개의 원문 대조는 당시 데이터·실행 환경의 결과입니다. 공개 서버의 BM25·Gemini 실행과 로컬 Chroma 검증을 구분합니다. 검색 진단 30문항의 결과 역시 실사용 효과나 독립적인 답변 정확도를 뜻하지 않습니다.
@@ -55,8 +55,8 @@ flowchart LR
 - [기능 회귀 집계](../evaluation/release-regression.json): 질문·코드 해시와 응답 모드별 결과
 - [실제 API 집계](../evaluation/live-api-checks.json): 호출·응답·출처 대조와 실행 조건
 - [서버용 데이터 검사](../evaluation/hosted-data-checks.json): 정제·보존 검사, 문서 수와 파일 해시
-- [실제 25개 공개 서버 확인](../evaluation/hosted-deployment-checks.json): 독립 접속·브라우저 시연·재시작·파일 다운로드 차단
-- [대화 화면 검사](../evaluation/chat-ui-checks.json): PC·모바일 화면과 대화·근거·입력 동작 확인
+- [최신 대화 화면·외부 접속 검사](../evaluation/chat-ui-checks.json): PC·모바일 화면과 대화·근거·입력 동작, 별도 환경의 4개 검사
+- [이전 실제 25개 공개 서버 확인](../evaluation/hosted-deployment-checks.json): [외부 접속 3개 검사](https://github.com/JunH14/sugang-mate/actions/runs/34437384036), 브라우저 시연, 재시작 후 같은 25개 자료·파일 해시 유지, 파일 다운로드 차단
 - [검색 진단 질문](../evaluation/retrieval_cases.json) · [검색 진단 결과](../evaluation/retrieval-results.json): 문항별 라벨·측정값
 - [과거 기록 감사](../evaluation/legacy-audit.json): 기존 실험의 동일 조건 여부와 재집계
 - [자동 테스트 코드](../tests/): 공개 예시로 재현하는 기능 검사

@@ -22,7 +22,7 @@
 
 질문 순서·기대 과목·채점 조건이 같은지 직접 비교했다. 이 결과는 구조화 조회를 포함한 기존 서비스 변경의 회귀 사례로 활용할 수 있으나, 실행 환경·모델·코드 등 모든 조건이 고정된 새 통제 실험으로 볼 수는 없다. 실제 API 호출 수나 비용 절감률도 도출하지 않는다.
 
-2,500개 기록의 `chroma_gemini` 응답은 43개다. 답변 문자열 조건이 지정된 항목은 634개이고 1,866개는 비어 있다. 비어 있는 조건은 해당 문자열 검사만 자동 충족하며, 다른 출처·모드 검사는 계속 적용된다. 따라서 “2,500개 LLM 답변의 사실성이 모두 검증됨”이라는 표현은 사용하지 않는다.
+2,500개 기록의 `chroma_gemini` 응답은 43개다. 답변 문자열 조건이 지정된 항목은 634개이고 1,866개는 비어 있다. 비어 있는 조건은 해당 문자열 검사만 자동 충족하며 다른 출처·모드 검사는 계속 적용된다. 따라서 “2,500개 LLM 답변의 사실성이 모두 검증됨”이라는 표현은 사용하지 않는다.
 
 재집계 코드: [audit_legacy_evaluation.py](../scripts/audit_legacy_evaluation.py)  
 원본 해시와 집계: [legacy-audit.json](../evaluation/legacy-audit.json)
@@ -73,7 +73,7 @@ python -m unittest discover -s tests -v
 python scripts/verify_release.py
 ~~~
 
-초기 공개 시점에는 Windows / Python 3.12의 새 가상환경에서 자동 테스트 32개와 공개 시나리오 5개를 확인했고, **Windows·Ubuntu × Python 3.11·3.12의 네 환경이 모두 통과**했다. [당시 실행 기록](https://github.com/JunH14/sugang-mate/actions/runs/34426806501)을 보존한다. 추가 수정 이후의 테스트 수·결과·코드 해시는 [release-checks.json](../evaluation/release-checks.json), 원격 실행 결과는 [최신 GitHub 검사](https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml)를 기준으로 한다.
+초기 공개 시점에는 Windows / Python 3.12의 새 가상환경에서 자동 테스트 32개와 공개 시나리오 5개를 확인했고 **Windows·Ubuntu × Python 3.11·3.12의 네 환경이 모두 통과**했다. [당시 실행 기록](https://github.com/JunH14/sugang-mate/actions/runs/34426806501)을 보존한다. 추가 수정 이후의 테스트 수·결과·코드 해시는 [release-checks.json](../evaluation/release-checks.json), 원격 실행 결과는 [최신 GitHub 검사](https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml)를 기준으로 한다.
 
 첫 원격 실행에서 발견한 Python 3.11의 f-string 문법 차이와 Windows 짧은 경로 표기 차이를 수정한 뒤 통과했다. CI는 외부 모델 API를 호출하지 않는다.
 
