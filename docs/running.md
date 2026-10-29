@@ -94,8 +94,14 @@ git remote add origin https://github.com/JunH14/sugang-mate.git
 git push -u origin main
 ~~~
 
-위 새 저장소 초기화 절차는 별도 공개본을 만들 때의 예시다. 이미 이 저장소를 clone했다면 초기화 대신 수정·커밋·push를 진행한다. 다른 계정으로 공개할 때는 주소를 변경한다. 원본 기말 제출 폴더 전체를 선택하지 않는다.
+위 새 저장소 초기화 절차는 별도 공개본을 만들 때의 예시다. 이미 이 저장소를 clone했다면 초기화 대신 수정·커밋·push를 진행한다. 다른 계정으로 공개할 때는 주소를 변경한다. 원본 자료가 섞인 작업 폴더 전체를 선택하지 않는다.
 
 현재 공개 저장소는 [JunH14/sugang-mate](https://github.com/JunH14/sugang-mate)다. GitHub Actions의 Windows·Ubuntu / Python 3.11·3.12 검사를 통과했으며 [최신 실행 상태](https://github.com/JunH14/sugang-mate/actions/workflows/checks.yml)를 확인할 수 있다.
 
 공식 안내: [기존 로컬 코드 업로드](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github), [Gradio ChatInterface](https://www.gradio.app/docs/gradio/chatinterface).
+
+## 2026-10-29 이후 벡터 인덱스
+
+구역 분할과 주변 문맥 정책이 변경되어 이전 인덱스는 데이터 해시·청크 수가 같아도 사용할 수 없다. 현재 정책 버전은 `sections-local-context-v3`이다. 인덱스가 없거나 버전이 다르면 BM25로 검색한다. 원문을 보유한 환경에서 기존 벡터 DB 구축 명령을 실행하면 본문이 같은 청크의 임베딩은 유지하고 주변 문맥 메타데이터를 갱신한다. 본문이 달라진 청크만 다시 임베딩한다.
+
+이번 작업에서는 실제 자료나 운영 인덱스를 다시 만들지 않았다. 깨진 HWP 문자나 이미 사라진 체크박스 선택 상태는 정제 JSONL만으로 복원하지 않는다. HTML 선택 상태 추출은 원본 HTML을 다시 처리할 때 적용된다.

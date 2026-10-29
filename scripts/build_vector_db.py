@@ -15,7 +15,8 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
-from retrieval_core import make_section_chunks
+from retrieval_core import CHUNKING_VERSION, make_section_chunks
+from sugang_mate.source_text import sanitize_retrieval_text
 from sugang_mate.config import dataset_fingerprint, offline_enabled, resolve_data_path, resolve_chroma_dir
 
 COLLECTION_NAME = "ku_sejong_bigdata_syllabi_v2"
@@ -66,23 +67,6 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 
-
-def sanitize_retrieval_text(text: str) -> str:
-    text = clean_text(text)
-    text = re.sub(
-        r"활동유형.*?(?=(?:▷\s*)?평가방법)",
-        "",
-        text,
-        flags=re.IGNORECASE | re.DOTALL,
-    )
-    text = re.sub(
-        r"수업유형\s+(?:대면\s+대면\s+)?(?:비대면\s+비대면\s+)?"
-        r"(?:병행\(대면&비대면 동시\)\s+병행\(대면&비대면 동시\)\s+)?미정",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-    return clean_text(text)
 
 
 def load_records(project_dir: Path) -> list[SyllabusRecord]:
@@ -263,7 +247,7 @@ def build(
     if metadata.get("embedding_model") != EMBEDDING_MODEL:
         raise RuntimeError("Existing index uses another embedding model. Rebuild with --reset.")
     # Invalidate before mutating so a partial rebuild cannot look current.
-    collection.modify(metadata={"embedding_model": EMBEDDING_MODEL, "dataset_sha256": "building"})
+    collection.modify(metadata={"embedding_model": EMBEDDING_MODEL, "chunking_version": CHUNKING_VERSION, "dataset_sha256": "building"})
 
     try:
         existing = collection.get(include=["documents"])
@@ -290,6 +274,13 @@ def build(
         collection.delete(ids=changed_ids)
         existing_ids.difference_update(changed_ids)
         print(f"Removed {len(changed_ids)} changed chunks for re-embedding.", flush=True)
+    # Unchanged embeddings can be retained, but their local context metadata
+    # must follow the current chunking policy too.
+    retained = [chunk for chunk in chunks if chunk.chunk_id in existing_ids]
+    for start in range(0, len(retained), batch_size):
+        batch = retained[start:start + batch_size]
+        collection.update(ids=[item.chunk_id for item in batch],
+                          metadatas=[item.metadata for item in batch])
     pending_chunks = [chunk for chunk in chunks if chunk.chunk_id not in existing_ids]
     completed_count = len(chunks) - len(pending_chunks)
 
@@ -324,11 +315,12 @@ def build(
         "embedding_model": EMBEDDING_MODEL,
         "course_count": len(records),
         "chunk_count": len(chunks),
+        "chunking_version": CHUNKING_VERSION,
         "dataset_sha256": dataset_fingerprint(resolve_data_path(project_dir)),
     }
     if collection.count() != len(chunks):
         raise RuntimeError("Index count does not match the completed dataset")
-    collection.modify(metadata={"embedding_model": EMBEDDING_MODEL, "dataset_sha256": manifest["dataset_sha256"]})
+    collection.modify(metadata={"embedding_model": EMBEDDING_MODEL, "chunking_version": CHUNKING_VERSION, "dataset_sha256": manifest["dataset_sha256"]})
     (persist_dir.parent / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2),
         encoding="utf-8",

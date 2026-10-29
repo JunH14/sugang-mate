@@ -5,18 +5,23 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 
+from sugang_mate.context import local_evidence_window
+
+# Bump when section splitting, sanitation, or parent context semantics change.
+CHUNKING_VERSION = "sections-local-context-v3"
+
 
 SECTION_PATTERNS = [
     ("기본정보", re.compile(r"^(?:과목명|교과목명|학수번호|분반|교수명|이수구분|연도/학기|학점|수업시간|강의계획서 URL)\s*[:：]", re.I)),
     ("수업운영", re.compile(r"(?:수업방법|수업운영|Class Type|Class Activity)", re.I)),
     ("평가방법", re.compile(r"(?:평가방법|평가계획|Evaluation(?: Plan)?|Midterm|Final|Attendance)", re.I)),
-    ("교과목개요", re.compile(r"(?:교과목개요|Course Description|Course Planning|Course Outline)", re.I)),
-    ("학습목표", re.compile(r"(?:학습목표|Study Objectives|Course Objectives)", re.I)),
+    ("교과목개요", re.compile(r"(?:교과목개요|강의개요|Course Description|Course Planning|Course Outline)", re.I)),
+    ("학습목표", re.compile(r"(?:학습목표|수업목표|Study Objectives|Course Objectives)", re.I)),
     ("교재및과제", re.compile(r"(?:수업자료|교재|Textbook|References|과제물|Homework)", re.I)),
     (
         "주별학습내용",
         re.compile(
-            r"(?:주별 학습내용|주별학습내용|Course Schedule|Weekly Learning Contents?|Week\s*\|\s*Period)",
+            r"(?:주별 학습내용|주별학습내용|주차별\s*강의계획|Course Schedule|Weekly Learning Contents?|Week\s*\|\s*Period)",
             re.I,
         ),
     ),
@@ -54,6 +59,8 @@ def clean_text(text: str) -> str:
 
 def detect_section(line: str, current: str) -> str:
     stripped = line.strip()
+    if stripped.startswith("[첨부 강의계획서:"):
+        return "기본정보"
     if SECTION_PATTERNS[-1][1].search(stripped):
         return "강의계획안HTML"
 
@@ -114,6 +121,8 @@ def split_sections(text: str) -> list[tuple[str, str]]:
 
 
 def split_with_overlap(text: str, chunk_size: int, overlap: int) -> list[str]:
+    if chunk_size <= 0 or overlap < 0 or overlap >= chunk_size:
+        raise ValueError("Require chunk_size > overlap >= 0")
     text = clean_text(text)
     if len(text) <= chunk_size:
         return [text] if text else []
@@ -145,10 +154,15 @@ def make_section_chunks(
     overlap: int = 120,
     parent_size: int = 2200,
 ) -> list[SectionChunk]:
+    if parent_size < chunk_size:
+        raise ValueError("parent_size must retain a complete child chunk")
     chunks: list[SectionChunk] = []
     for section_name, section_text in split_sections(text):
-        parent_text = section_text[:parent_size]
+        search_start = 0
         for local_index, child in enumerate(split_with_overlap(section_text, chunk_size, overlap)):
+            position = section_text.find(child, search_start)
+            parent_text = local_evidence_window(section_text, child, search_start, parent_size)
+            search_start = max(0, position + len(child) - overlap)
             chunks.append(
                 SectionChunk(
                     text=child,

@@ -17,6 +17,11 @@ from pathlib import Path
 from typing import Any, Callable
 
 from sugang_mate.cache import TTLCache
+from sugang_mate.query_text import (
+    SYNONYMS, normalize_cache_key, tokenize, expand_query_tokens, contains_any, contains_phrase,
+)
+from sugang_mate.context import generation_evidence_text, select_generation_matches
+from sugang_mate.source_text import sanitize_retrieval_text, assessment_source_sections
 from sugang_mate.config import (
     dataset_fingerprint,
     load_dotenv,
@@ -27,6 +32,7 @@ from sugang_mate.config import (
 
 from retrieval_core import (
     BM25Index,
+    CHUNKING_VERSION,
     make_section_chunks,
     section_priority,
     split_sections,
@@ -117,43 +123,6 @@ EXAMPLE_QUESTIONS = [
     "머신러닝 과목은 어떤 내용을 배우는지 알려줘.",
 ]
 
-
-SYNONYMS = {
-    "팀활동": [
-        "팀활동", "팀 활동", "팀플", "팀프젝", "팀플젝", "팀 프로젝트", "팀프로젝트", "팀 과제",
-        "팀과제", "팀 협력", "팀협력", "팀워크", "협업", "협동", "조별",
-        "조별 활동", "조별활동", "조별 과제", "조별과제", "조별 프로젝트", "조별플젝",
-        "그룹 활동", "그룹활동", "그룹 프로젝트", "group project", "team project",
-    ],
-    "프로젝트": [
-        "프로젝트", "프로젝트형", "프로젝트 중심", "PBL", "캡스톤", "project",
-        "project based learning",
-    ],
-    "코딩": [
-        "코딩", "프로그래밍", "개발", "구현", "코드", "coding", "programming",
-    ],
-    "실습": [
-        "실습", "실습형", "실습 중심", "실습위주", "실습 위주", "직접 해보는",
-        "practice", "hands-on", "lab",
-    ],
-    "발표": ["발표", "프레젠테이션", "presentation", "세미나 발표"],
-    "토론": ["토론", "토의", "discussion", "debate"],
-    "파이썬": ["파이썬", "python"],
-    "R언어": ["R언어", "R 언어", "R프로그래밍", "R 프로그래밍"],
-    "시험": ["시험", "중간고사", "기말고사", "고사", "평가"],
-    "중간고사": ["중간고사", "중간", "midterm"],
-    "기말고사": ["기말고사", "기말", "final"],
-    "과제": ["과제", "숙제", "레포트", "리포트", "assignment", "homework", "보고서"],
-    "퀴즈": ["퀴즈", "쪽지시험", "쪽지 시험", "quiz", "퀴즈형 시험"],
-    "출석": ["출석", "attendance"],
-    "평가": ["평가", "성적", "비율", "배점", "grading"],
-    "영강": ["영강", "영어 수업", "영어수업", "영어 강의", "영어강의", "English"],
-    "학습내용": [
-        "학습내용", "학습 내용", "수업내용", "수업 내용", "강의내용", "강의 내용",
-        "주별학습내용", "주별 학습내용", "커리큘럼", "뭘 배워", "무엇을 배워",
-        "배우는 내용", "다루는 내용",
-    ],
-}
 
 TEAMWORK_QUERY_TERMS = tuple(SYNONYMS["팀활동"])
 TEAMWORK_EVIDENCE_PATTERNS = (
@@ -276,26 +245,6 @@ FEATURE_TOPICS = {
         ),
     },
 }
-
-
-TOKEN_RE = re.compile(r"[가-힣A-Za-z0-9_./+-]+")
-QUERY_STOPWORDS = {
-    "강의", "강의가", "과목", "과목이", "과목은", "과목을", "교과목",
-    "수업", "수업이", "수업은", "수업을", "내용", "내용을",
-    "알려줘", "보여줘", "설명해줘", "추천해줘", "말해줘",
-    "있어", "있나요", "있는", "뭐가", "무엇", "어떤", "어때",
-    "배우는", "배우고", "대해", "대한", "관련", "그리고", "또는",
-}
-KOREAN_QUERY_SUFFIXES = (
-    "에서는", "으로는", "에게는", "이라는", "이라고", "에서", "으로",
-    "이나", "하고", "처럼", "보다", "부터", "까지", "은", "는", "이",
-    "가", "을", "를", "과", "와", "로", "도", "만", "나",
-)
-
-
-def normalize_cache_key(question: str) -> str:
-    normalized = re.sub(r"\s+", " ", question.strip()).casefold()
-    return re.sub(r"[?!.,。！？]+$", "", normalized).strip()
 
 
 def api_error_status(error: Exception) -> int | None:
@@ -551,12 +500,13 @@ class SyllabusRag:
                     if (
                         collection_count == len(self.chunks)
                         and metadata.get("dataset_sha256") == self.dataset_sha256
+                        and metadata.get("chunking_version") == CHUNKING_VERSION
                         and metadata.get("embedding_model") == EMBEDDING_MODEL
                     ):
                         return collection
                     if collection_count > 0:
                         print(
-                            "Chroma index has missing or stale dataset/model identity: "
+                            "Chroma index has missing or stale dataset/model/chunking identity: "
                             f"collection={collection_count}, local={len(self.chunks)}. "
                             "Falling back to the current local chunks.",
                             file=sys.stderr,
@@ -585,6 +535,7 @@ class SyllabusRag:
                 matches = apply_relevance_threshold(question, vector_matches)
                 if matches:
                     return matches
+        self.request_state.search_backend = "keyword"
         matches = apply_relevance_threshold(question, self._search_keyword(question, top_k))
         if matches or not allow_rewrite or not self.gemini_client:
             return matches
@@ -593,7 +544,10 @@ class SyllabusRag:
         if rewritten and normalize_cache_key(rewritten) != normalize_cache_key(question):
             rewritten_matches = self.search(rewritten, top_k=top_k, allow_rewrite=False)
             if rewritten_matches:
-                self.request_state.search_backend = "hybrid_rewrite"
+                self.request_state.search_backend = (
+                    "hybrid_rewrite" if getattr(self.request_state, "search_backend", "keyword")
+                    in {"chroma", "hybrid"} else "keyword_rewrite"
+                )
                 self.request_state.rewritten_query = rewritten
                 return rewritten_matches
         return []
@@ -1147,28 +1101,7 @@ JSON 한 개만 출력:
         then add at most four overview/objective sections from those courses.
         This does not change retrieval ranking or introduce additional courses.
         """
-        courses = list(dict.fromkeys(match.chunk.syllabus.course_key for match in matches))
-        if not courses or len(courses) > 2:
-            return matches[:5]
-        selected: list[Match] = []
-        seen: set[tuple[str, str, str]] = set()
-
-        def add(match: Match) -> None:
-            key = (match.chunk.syllabus.course_key, match.chunk.section,
-                   match.chunk.parent_text or match.chunk.text)
-            if key not in seen and len(selected) < 9:
-                seen.add(key)
-                selected.append(match)
-
-        for match in matches[:5]:
-            add(match)
-        for section in ("교과목개요", "학습목표"):
-            for course in courses:
-                candidate = next((chunk for chunk in self.chunks
-                                  if chunk.syllabus.course_key == course and chunk.section == section), None)
-                if candidate is not None:
-                    add(Match(chunk=candidate, score=0.0))
-        return selected
+        return select_generation_matches(matches, self.chunks, Match)
 
     def _answer_with_gemini(self, question: str, matches: list[Match]) -> dict[str, Any] | None:
         from google.genai import types
@@ -1184,7 +1117,7 @@ JSON 한 개만 출력:
                     f"교수: {match.chunk.syllabus.professor}",
                     f"이수구분: {match.chunk.syllabus.completion_type or '미확인'}",
                     f"수업시간 및 강의실: {match.chunk.syllabus.schedule_summary or '미기재'}",
-                    (match.chunk.parent_text or match.chunk.text)[:2200],
+                    generation_evidence_text(match.chunk),
                 ]
             )
             for index, match in enumerate(context_matches, start=1)
@@ -1196,6 +1129,7 @@ JSON 한 개만 출력:
 답변에는 과목명과 학수번호를 함께 제시하세요.
 추천이나 비교 질문이면 핵심 과목을 먼저 말하고, 근거를 짧게 덧붙이세요.
 과목명만 보고 활동 내용을 추정하지 마세요.
+자료 사이의 평가 내용이 다르면 어느 한쪽을 확정하지 말고 차이와 원문 확인 필요성을 알리세요.
 추천 목록에는 과제, 평가방식, 주차계획, 수업운영원칙 등에서 근거가 확인되는 과목만 넣으세요.
 
 [강의계획서 발췌]
@@ -1311,49 +1245,6 @@ def extract_completion_type(text: str) -> str:
         flags=re.IGNORECASE,
     )
     return match.group(1) if match else ""
-
-
-def sanitize_retrieval_text(text: str) -> str:
-    """Remove form controls whose selected state is lost during text extraction."""
-    text = clean_text(text)
-    text = re.sub(
-        r"활동유형.*?(?=(?:▷\s*)?평가방법)",
-        "",
-        text,
-        flags=re.IGNORECASE | re.DOTALL,
-    )
-    text = re.sub(
-        r"수업유형\s+(?:대면\s+대면\s+)?(?:비대면\s+비대면\s+)?"
-        r"(?:병행\(대면&비대면 동시\)\s+병행\(대면&비대면 동시\)\s+)?미정",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-    return clean_text(text)
-
-
-def tokenize(text: str) -> list[str]:
-    tokens = [token.lower() for token in TOKEN_RE.findall(text)]
-    return [token for token in tokens if len(token) >= 2]
-
-
-def expand_query_tokens(tokens: list[str]) -> list[str]:
-    expanded: list[str] = []
-    for token in tokens:
-        if token in QUERY_STOPWORDS:
-            continue
-        expanded.append(token)
-        for suffix in KOREAN_QUERY_SUFFIXES:
-            if token.endswith(suffix) and len(token) - len(suffix) >= 2:
-                stem = token[: -len(suffix)]
-                if stem not in QUERY_STOPWORDS:
-                    expanded.append(stem)
-                break
-    query = " ".join(expanded)
-    for key, values in SYNONYMS.items():
-        if contains_any(query, {key, *values}):
-            expanded.extend(tokenize(" ".join(values)))
-    return list(dict.fromkeys(expanded))
 
 
 CODING_QUERY_TERMS = {
@@ -1557,29 +1448,6 @@ TITLE_QUERY_NOISE = sorted(
     key=len,
     reverse=True,
 )
-
-
-def _contains_term(text: str, term: str) -> bool:
-    # Encoding/decoding describe a representation, not a programming activity.
-    # Keep Korean particles and compounds such as "코딩을" and "바이브코딩".
-    if term == "코딩":
-        return re.search(r"(?<![인디엔])코딩", text) is not None
-    if term == "coding":
-        return re.search(r"(?<![a-z])coding(?![a-z])", text) is not None
-    return term in text
-
-
-def contains_any(text: str, terms: set[str]) -> bool:
-    lowered = text.casefold()
-    return any(_contains_term(lowered, term.casefold()) for term in terms)
-
-
-def contains_phrase(text: str, phrases: tuple[str, ...] | list[str]) -> bool:
-    compact = re.sub(r"\s+", "", text).casefold()
-    return any(
-        _contains_term(compact, re.sub(r"\s+", "", phrase).casefold())
-        for phrase in phrases
-    )
 
 
 def evidence_excerpt(text: str, match: re.Match[str], max_len: int = 240) -> str:
@@ -3510,9 +3378,19 @@ def is_contextual_followup_question(question: str) -> bool:
 
 
 def contextual_assessment_summary(syllabus: Syllabus, max_len: int = 650) -> str:
-    raw = section_text(syllabus, "평가방법")
-    if not raw:
+    source_sections = assessment_source_sections(syllabus.text, split_sections)
+    if not source_sections:
         return ""
+    if len(source_sections) > 1:
+        # Never silently replace an attachment's policy with an HTML copy.
+        # Preserve both, without inferring which version is authoritative.
+        note = "자료별 평가 내용을 함께 표시합니다. 값이 다르면 원문 확인이 필요합니다."
+        per_source = max(80, (max_len - len(note)) // len(source_sections) - 30)
+        return note + "\n" + "\n".join(
+            f"{label or '[강의계획서]'} {' '.join(part.split())[:per_source]}"
+            for label, part in source_sections
+        )
+    raw = source_sections[0][1]
 
     for marker in (
         "◆ Learning Plan",
@@ -3522,10 +3400,6 @@ def contextual_assessment_summary(syllabus: Syllabus, max_len: int = 650) -> str
     ):
         if marker in raw:
             raw = raw.split(marker, 1)[0]
-    for marker in ("▷ Evaluation Method", "Evaluation Method"):
-        if marker in raw:
-            raw = "Evaluation Method " + raw.split(marker, 1)[1]
-            break
     raw = re.sub(r"\[page\s*\d+\]", " ", raw, flags=re.IGNORECASE)
     raw = re.sub(r"평가방법이\s*입력\s*되지\s*않았습니다", " ", raw)
     raw = re.sub(
@@ -3929,7 +3803,7 @@ def source_payload(matches: list[Match], question: str | None = None) -> list[di
                         "교재및과제", "주별학습내용", "지원및윤리", "Course Description",
                         "Course Objectives", "Study Objectives"}
             lines = [line.strip() for item in course_matches
-                     for line in (item.chunk.parent_text or item.chunk.text)[:2200].splitlines()
+                     for line in generation_evidence_text(item.chunk).splitlines()
                      if line.strip() and line.strip() not in headings]
             payload[-1]["snippet"] = best_snippet(question, "\n".join(lines), 220)
             payload[-1]["sections"] = sections

@@ -108,7 +108,7 @@ class ConfigurationTests(unittest.TestCase):
                 shutil.copyfile(PROJECT_DIR / filename, release / filename)
             package = release / "sugang_mate"
             package.mkdir()
-            for filename in ("__init__.py", "config.py", "cache.py"):
+            for filename in ("__init__.py", "config.py", "cache.py", "context.py", "query_text.py", "source_text.py"):
                 shutil.copyfile(PROJECT_DIR / "sugang_mate" / filename, package / filename)
             write_fixture(release / "data/sample/syllabus_texts.jsonl")
             (release / "data/vector_db/chroma").mkdir(parents=True)
@@ -274,11 +274,14 @@ class RagIsolationTests(unittest.TestCase):
         valid = {
             "dataset_sha256": self.rag.dataset_sha256,
             "embedding_model": self.app.EMBEDDING_MODEL,
+            "chunking_version": self.app.CHUNKING_VERSION,
         }
         for metadata, accepted in (
             ({}, False),
             ({**valid, "dataset_sha256": "another-dataset"}, False),
             ({**valid, "embedding_model": "another-model"}, False),
+            ({**valid, "chunking_version": "old-policy"}, False),
+            ({key: value for key, value in valid.items() if key != "chunking_version"}, False),
             (valid, True),
         ):
             with self.subTest(metadata=metadata):

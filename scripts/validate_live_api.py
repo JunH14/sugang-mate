@@ -179,7 +179,8 @@ def build_private_index(core, measured: MeasuredModels, client, index_dir: Path,
     fingerprint = core.dataset_fingerprint(core.resolve_data_path(ROOT))
     metadata = collection.metadata or {}
     reused = (collection.count() == len(chunks) and metadata.get("dataset_sha256") == fingerprint
-              and metadata.get("embedding_model") == core.EMBEDDING_MODEL)
+              and metadata.get("embedding_model") == core.EMBEDDING_MODEL
+              and metadata.get("chunking_version") == core.CHUNKING_VERSION)
     if not reused:
         if metadata.get("embedding_model") != core.EMBEDDING_MODEL:
             raise RuntimeError("Validation index uses another embedding model; select a new directory")
@@ -190,7 +191,12 @@ def build_private_index(core, measured: MeasuredModels, client, index_dir: Path,
             raise RuntimeError("Partial index contains another dataset; select a new directory")
         pending = [chunk for chunk in chunks if chunk.chunk_id not in existing_docs]
         collection.modify(metadata={"embedding_model": core.EMBEDDING_MODEL,
-                                    "dataset_sha256": "building"})
+                                    "dataset_sha256": "building", "chunking_version": core.CHUNKING_VERSION})
+        retained = [chunk for chunk in chunks if chunk.chunk_id in existing_docs]
+        for start in range(0, len(retained), batch_size):
+            batch = retained[start:start + batch_size]
+            collection.update(ids=[chunk.chunk_id for chunk in batch],
+                              metadatas=[chunk.metadata for chunk in batch])
         measured.phase = "index_build"
         for start in range(0, len(pending), batch_size):
             if start:
@@ -206,7 +212,7 @@ def build_private_index(core, measured: MeasuredModels, client, index_dir: Path,
         if collection.count() != len(chunks):
             raise RuntimeError("Completed index count does not match the source dataset")
         collection.modify(metadata={"embedding_model": core.EMBEDDING_MODEL,
-                                    "dataset_sha256": fingerprint})
+                                    "dataset_sha256": fingerprint, "chunking_version": core.CHUNKING_VERSION})
     return {"course_count": len(records), "chunk_count": len(chunks),
             "dataset_sha256": fingerprint, "embedding_model": core.EMBEDDING_MODEL,
             "index_count": collection.count(), "reused_verified_index": reused,

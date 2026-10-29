@@ -15,6 +15,11 @@ from pathlib import Path
 from typing import Iterable
 
 
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+if str(PROJECT_DIR) not in sys.path:
+    sys.path.insert(0, str(PROJECT_DIR))
+from sugang_mate.html_text import extract_static_html_text
+
 FREESECT = 0xFFFFFFFF
 ENDOFCHAIN = 0xFFFFFFFE
 
@@ -44,12 +49,7 @@ def resolve_project_path(project_dir: Path, value: str) -> Path | None:
 
 def extract_html_text(path: Path) -> str:
     raw = path.read_text(encoding="utf-8", errors="replace")
-    raw = re.sub(r"<script\b[^>]*>.*?</script>", " ", raw, flags=re.I | re.S)
-    raw = re.sub(r"<style\b[^>]*>.*?</style>", " ", raw, flags=re.I | re.S)
-    raw = re.sub(r"(?i)<br\s*/?>", "\n", raw)
-    raw = re.sub(r"(?i)</(?:p|div|tr|table|li|h[1-6])>", "\n", raw)
-    raw = re.sub(r"<[^>]+>", " ", raw)
-    return clean_text(html.unescape(raw))
+    return clean_text(extract_static_html_text(raw))
 
 
 def extract_pdf_text(path: Path) -> str:
