@@ -45,7 +45,7 @@ Copy-Item .env.example .env
 .\.venv\Scripts\python.exe gradio_app.py
 ~~~
 
-수집기는 대상 학기·학과가 코드에 명시되어 있다. 다른 학기·학과로의 수집은 설정과 페이지 형식을 검토해야 한다. 별도 변환만 수행하려면 `python scripts/extract_texts.py --project-dir .`을 사용한다.
+수집기는 대상 학기·학과가 코드에 명시되어 있다. 다른 학기·학과의 자료를 수집하려면 설정과 페이지 형식을 검토해야 한다. 별도 변환만 수행하려면 `python scripts/extract_texts.py --project-dir .`을 사용한다.
 
 벡터 생성에는 API 사용량이 발생한다. 오래된 데이터/모델/청크 수의 인덱스는 앱이 사용하지 않는다. 다른 임베딩 모델의 인덱스를 초기화할 때만 내용을 확인하고 `--reset`을 사용한다. 현재 코드 기본 모델은 `gemini-3.1-flash-lite`, 임베딩은 `gemini-embedding-001`이다. 모델 가용성은 실행 계정에서 확인해야 한다.
 

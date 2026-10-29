@@ -16,7 +16,7 @@
 python scripts/prepare_hosted_data.py
 ```
 
-출력은 Git에서 제외되는 `artifacts/hosted/syllabus_texts.jsonl`이며 공개 검사 기록은 `evaluation/hosted-data-checks.json`입니다. 경로는 `--input`, `--output`, `--report`로 지정할 수 있습니다. 원본 파일은 수정하지 않습니다. 실행기는 검사 기록의 `hosted_dataset_sha256`·`document_count`와 서버 파일을 대조하므로, 데이터 파일과 해당 검사 기록은 함께 갱신해야 합니다.
+출력은 Git에서 제외되는 `artifacts/hosted/syllabus_texts.jsonl`이며 공개 검사 기록은 `evaluation/hosted-data-checks.json`입니다. 경로는 `--input`, `--output`, `--report`로 지정할 수 있습니다. 원본 파일은 수정하지 않습니다. 실행기는 검사 기록의 `hosted_dataset_sha256`·`document_count`와 서버 파일을 대조하므로 데이터 파일과 해당 검사 기록은 함께 갱신해야 합니다.
 
 ## Render 설정
 
@@ -37,7 +37,7 @@ Render에서 **New → Web Service → Public Git Repository**를 선택하고 �
 
 Secret File은 `/etc/secrets/sugang-syllabi.jsonl`로 읽습니다. 기본 `collected` 모드에서 파일이 없거나 검사 기록과 맞지 않으면 실행을 중단합니다. 가상 데이터로 조용히 바뀌지 않습니다.
 
-키의 값은 저장소·명령어·문서에 넣지 않습니다. `run_public.py`가 `0.0.0.0`과 Render의 `PORT` 환경변수에 맞춰 서버를 엽니다. 공개 저장소 URL 방식은 자동 배포를 지원하지 않으므로, GitHub에 변경 사항을 올린 뒤 Render에서 **Manual Deploy → Deploy latest commit**을 실행합니다. [Render 웹 서비스 안내](https://render.com/docs/web-services)
+키의 값은 저장소·명령어·문서에 넣지 않습니다. `run_public.py`가 `0.0.0.0`과 Render의 `PORT` 환경변수에 맞춰 서버를 엽니다. 공개 저장소 URL 방식은 자동 배포를 지원하지 않으므로 GitHub에 변경 사항을 올린 뒤 Render에서 **Manual Deploy → Deploy latest commit**을 실행합니다. [Render 웹 서비스 안내](https://render.com/docs/web-services)
 
 ## 같은 설정으로 로컬 실행
 
